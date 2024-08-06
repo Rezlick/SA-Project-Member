@@ -6,6 +6,8 @@ import(
 
 type Rank struct{
 	gorm.Model
-	RankName 	string	`json:"rank_name"`
-	Discount	float32	`json:"discount"`
+	RankName 	string		`json:"rank_name"`
+	Discount	float32		`json:"discount"`
+
+	Member 		[]Member 	`gorm:"foreignKey:rank_id"`
 }
