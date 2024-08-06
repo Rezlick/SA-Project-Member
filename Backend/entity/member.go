@@ -14,12 +14,12 @@ type Member struct{
 	RegiterDate	time.Time 		`json:"register_date"`
 
 	// FK from Rank
-	RankID		uint			`json:"rank_id"`
-	Rank		*Rank			`gorm:"foreignKey: rank_id" json:"rank"`
+	RankID		*uint
+	Rank		Rank			`gorm:"foreignKey: rank_id"`
 	
 	// FK from Employee
 	EmployeeID	*string			
-	Employee	*Employee		`gorm:"foreignKey: employee_id" json:"employee"`
+	Employee	Employee		`gorm:"foreignKey: employee_id"`
 
 	CreatedAt 	time.Time
 	UpdatedAt 	time.Time
