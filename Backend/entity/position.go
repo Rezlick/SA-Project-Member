@@ -6,7 +6,7 @@ import(
 
 type Position struct{
 	gorm.Model
-	Position 		string
+	Position 	string
 			
-	Employee 		[]Employee 		`gorm:"foreignKey:position_id"`
+	Employee 	[]Employee 		`gorm:"foreignKey:position_id"`
 }
