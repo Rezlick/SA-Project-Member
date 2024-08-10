@@ -11,12 +11,10 @@ type Employee struct{
 	Username		string		
 	Password		string		
 
-	// FK from Position
-	PositionID		*uint
-	Position		Position 	`gorm:"foreignKey: position_id"`
-
 	// FK from Gender
 	GenderID		*uint
 	Gender			Gender 		`gorm:"foreignKey: gender_id"`
-
+	// FK from Position
+	PositionID		*uint
+	Position		Position 	`gorm:"foreignKey: position_id"`
 }
