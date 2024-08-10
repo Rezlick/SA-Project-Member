@@ -1,4 +1,4 @@
-module github.com/rezlick/SA_Project
+module github.com/Rezlick/SA_Project_Member
 
 go 1.22.5
 
