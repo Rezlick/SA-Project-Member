@@ -6,8 +6,8 @@ import(
 
 type Rank struct{
 	gorm.Model
-	Rank 		string		
+	Name 		string		
 	Discount	float64	
 
-	Member 		[]Member 		`gorm:"foreignKey:rank_id"`
+	Members 		[]Member 		`gorm:"foreignKey:rank_id"`
 }
