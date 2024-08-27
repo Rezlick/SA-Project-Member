@@ -7,14 +7,16 @@ import(
 type Employee struct{
 	gorm.Model
 	FirstName		string		
-	LastName		string		
-	Username		string		
+	LastName		string	
+	Email			string	
 	Password		string		
 
 	// FK from Gender
-	GenderID		*uint
+	GenderID		uint
 	Gender			Gender 		`gorm:"foreignKey: gender_id"`
 	// FK from Position
-	PositionID		*uint
+	PositionID		uint
 	Position		Position 	`gorm:"foreignKey: position_id"`
+
+	Members			[]Member	`gorm:"foreignKey: employee_id"`
 }
