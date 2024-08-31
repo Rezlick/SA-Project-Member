@@ -16,9 +16,11 @@ This project is using React Vite(Typescript) + Go
 ```
 ## Frontend install
 
+```bash
 Router DOM
     npm install --save react-router-dom@6.x
 Ant Design
     npm install antd --save
 Axios
     npm instal axios --save
+```
