@@ -27,7 +27,7 @@ func SignIn(c *gin.Context) {
        return
    }
 
-   // ค้นหา user ด้วย Username ที่ผู้ใช้กรอกเข้ามา
+   // ค้นหา user ด้วย Email ที่ผู้ใช้กรอกเข้ามา
    if err := config.DB().Raw("SELECT * FROM employees WHERE email = ?", payload.Email).Scan(&employee).Error; err != nil {
        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
        return
@@ -36,7 +36,7 @@ func SignIn(c *gin.Context) {
    // ตรวจสอบรหัสผ่าน
    err := bcrypt.CompareHashAndPassword([]byte(employee.Password), []byte(payload.Password))
    if err != nil {
-       c.JSON(http.StatusBadRequest, gin.H{"error": "password is incerrect"})
+       c.JSON(http.StatusBadRequest, gin.H{"error": "password is incorrect"})
        return
    }
 
@@ -51,5 +51,10 @@ func SignIn(c *gin.Context) {
        c.JSON(http.StatusBadRequest, gin.H{"error": "error signing token"})
        return
    }
-   c.JSON(http.StatusOK, gin.H{"token_type": "Bearer", "token": signedToken, "id": employee.ID})
+   c.JSON(http.StatusOK, gin.H{ "token_type": "Bearer",
+                                "token": signedToken,
+                                "id": employee.ID ,
+                                "firstName":employee.FirstName,
+                                "lastName" :employee.LastName,
+                                "positionID" : employee.PositionID})
 }
