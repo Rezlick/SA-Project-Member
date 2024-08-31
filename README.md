@@ -3,17 +3,17 @@ This project is using React Vite(Typescript) + Go
 
 ## Backend install
     
-Gin
+```bash
     go get -u github.com/gin-gonic/gin
-GORM
-    go get -u gorm.io/gorm
-Sqlite
-    go get -u gorm.io/driver/sqlite
-JWT
-    go get -u github.com/dgrijalva/jwt-go
-Bcrypt
-    go get -u golang.org/x/crypto@v0.16.0
 
+    go get -u gorm.io/gorm
+
+    go get -u gorm.io/driver/sqlite
+
+    go get -u github.com/dgrijalva/jwt-go
+
+    go get -u golang.org/x/crypto@v0.16.0
+```
 ## Frontend install
 
 Router DOM
