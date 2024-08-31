@@ -39,7 +39,7 @@ func main() {
        router.GET("/members", controller.GetMembers)
        router.GET("/member/:id", controller.GetMemberByID)
        router.PATCH("/member/:id", controller.UpdateMember)
-       router.DELETE("/members/:id", controller.DeleteMember)
+       router.DELETE("/member/:id", controller.DeleteMember)
 
        // Gender Routes
        router.GET("/genders", controller.GetGenders)
