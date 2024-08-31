@@ -2,6 +2,7 @@
 This project is using React Vite(Typescript) + Go
 
 ## Backend install
+install [go](https://go.dev/dl/) first
     
 ```bash
     go get -u github.com/gin-gonic/gin
@@ -15,12 +16,12 @@ This project is using React Vite(Typescript) + Go
     go get -u golang.org/x/crypto@v0.16.0
 ```
 ## Frontend install
+install [node.js](https://nodejs.org/en/download/package-manager/current) first
 
 ```bash
-Router DOM
     npm install --save react-router-dom@6.x
-Ant Design
+
     npm install antd --save
-Axios
+
     npm instal axios --save
 ```
