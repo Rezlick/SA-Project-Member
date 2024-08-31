@@ -1,11 +1,11 @@
 # SA_Project
 This project is using React Vite(Typescript) + Go
 
---Backend install-- 
+## Backend install
     
-Gin 
+Gin
     go get -u github.com/gin-gonic/gin
-GORM 
+GORM
     go get -u gorm.io/gorm
 Sqlite
     go get -u gorm.io/driver/sqlite
@@ -14,7 +14,8 @@ JWT
 Bcrypt
     go get -u golang.org/x/crypto@v0.16.0
 
---Frontend install--
+## Frontend install
+
 Router DOM
     npm install --save react-router-dom@6.x
 Ant Design
