@@ -1,7 +1,8 @@
 # SA_Project
-This project is using React Vite(Typescript) + Go
+This project is the main project for the System Analysis and Design subject, 
+developed using React Vite (with TypeScript) and Go.
 
-## Backend install
+## Backend installation
 install [go](https://go.dev/dl/) first
     
 ```bash
@@ -15,7 +16,7 @@ install [go](https://go.dev/dl/) first
 
     go get -u golang.org/x/crypto@v0.16.0
 ```
-## Frontend install
+## Frontend installation
 install [node.js](https://nodejs.org/en/download/package-manager/current) first
 
 ```bash
