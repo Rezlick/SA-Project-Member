@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect,useState } from "react";
 import {
   Space,
   Button,
@@ -12,13 +12,16 @@ import {
   Select,
 } from "antd";
 import { MemberInterface } from "../../../../interfaces/Member";
-import { GetMemberByID, UpdateMember } from "../../../../services/https";
+import { GetMemberByID, UpdateMember, GetRanks } from "../../../../services/https";
 import { useNavigate, Link, useParams } from "react-router-dom";
+import { RankInterface } from "../../../../interfaces/Rank";
 
 function MemberEdit() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [messageApi, contextHolder] = message.useMessage();
+
+  const [ranks, setRanks] = useState<RankInterface[]>([]);
   const [form] = Form.useForm();
 
   const getMemberById = async (id: string) => {
@@ -28,7 +31,7 @@ function MemberEdit() {
         FirstName: res.data.FirstName,
         LastName: res.data.LastName,
         PhoneNumber: res.data.PhoneNumber,
-        RankID: res.data.Rank?.ID,
+        RankID: res.data.RankID,
       });
     } else {
       messageApi.open({
@@ -38,6 +41,22 @@ function MemberEdit() {
       setTimeout(() => {
         navigate("/member");
       }, 2000);
+    }
+  };
+
+  const getRanks = async () => {
+    try {
+      const res = await GetRanks(); // Fetch data from the API
+
+      if (res.status === 200) {
+        setRanks(res.data); // Set the data from the API response
+      } else {
+        setRanks([]);
+        messageApi.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
+      }
+    } catch (error) {
+      setRanks([]);
+      messageApi.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
     }
   };
 
@@ -63,6 +82,7 @@ function MemberEdit() {
     if (id) {
       getMemberById(id);
     }
+    getRanks();
   }, [id]);
 
   return (
@@ -131,17 +151,16 @@ function MemberEdit() {
                 rules={[
                   {
                     required: true,
-                    message: "กรุณาเลือกระดับสมาชิก !",
+                    message: "กรุณาเลือกระดับสมาชิก!",
                   },
                 ]}
               >
                 <Select
                   style={{ width: "100%" }}
-                  options={[
-                    { value: 1, label: "Bronze" },
-                    { value: 2, label: "Silver" },
-                    { value: 3, label: "Gold" },
-                  ]}
+                  options={ranks.map((rank) => ({
+                    value: rank.ID,
+                    label: rank.Name,
+                  }))}
                 />
               </Form.Item>
             </Col>
