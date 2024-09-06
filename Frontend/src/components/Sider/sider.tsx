@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Layout, Menu, message, Button } from "antd";
-import logo from "../../assets/logo.png";
+
 import {
   UserOutlined,
   DashboardOutlined,
@@ -13,42 +13,69 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { GetPositions } from "../../services/https";
+import { GetEmployeeByID, GetPositions } from "../../services/https";
 import { PositionInterface } from "../../interfaces/Position";
+import { EmployeeInterface } from "../../interfaces/Employee";
 
 function Sider() {
   const page = localStorage.getItem("page");
   const { Sider } = Layout;
   const [messageApi, contextHolder] = message.useMessage();
   const [collapsed, setCollapsed] = useState(false);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [positionName, setPositionName] = useState("");
-  const positionID = localStorage.getItem("positionID");
+  const [profile, setProfile] = useState("");
+  const employeeID = localStorage.getItem("id");
 
   // Function to fetch positions and set the appropriate position name
-  const getPositions = async () => {
+  const getEmployeeById = async () => {
     try {
-      const res = await GetPositions(); // Fetch data from the API
-
+      const res = await GetEmployeeByID(employeeID || ""); // Fetch employee data from the API
       if (res.status === 200) {
-        const positions: PositionInterface[] = res.data;
-        const position = positions.find(pos => pos.ID === parseInt(positionID || ""));
-        setPositionName( position.Name );
+        const employee: EmployeeInterface = res.data;
+        setFirstName(employee.FirstName || "");
+        setLastName(employee.LastName || "");
+        setProfile(employee.Profile || "");
+        if (employee.PositionID) {
+          getPositionNameById(employee.PositionID); // Fetch position name based on PositionID
+        } else {
+          setPositionName("Unknown Position");
+        }
       } else {
-        setPositionName("Unknown Position");
         messageApi.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
+        setPositionName("Unknown Position");
       }
     } catch (error) {
-      setPositionName("Unknown Position");
       messageApi.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
+      setPositionName("Unknown Position");
+    }
+  };
+
+  // Function to fetch position name by position ID
+  const getPositionNameById = async (positionID: number) => {
+    try {
+      const res = await GetPositions(); // Fetch all positions
+      if (res.status === 200) {
+        const positions: PositionInterface[] = res.data;
+        const position = positions.find((pos) => pos.ID === positionID);
+
+        if (position) {
+          setPositionName(position.Name || "Unknown Position");
+        } else {
+          setPositionName("Unknown Position");
+        }
+      } else {
+        messageApi.error(res.data.error || "ไม่สามารถดึงตำแหน่งได้");
+      }
+    } catch (error) {
+      messageApi.error("เกิดข้อผิดพลาดในการดึงข้อมูลตำแหน่ง");
     }
   };
 
   useEffect(() => {
-    setFirstName(localStorage.getItem("firstName") || "");
-    setLastName(localStorage.getItem("lastName") || "");
-    getPositions();
+    getEmployeeById();
   }, []);
 
   const setCurrentPage = (val: string) => {
@@ -101,14 +128,16 @@ function Sider() {
               }}
             >
               <img
-                src={logo}
-                alt="Logo"
+                src={profile}
+                alt="Profile"
                 style={{
                   objectFit: "cover",
                   width: collapsed ? "50px" : "100px",
                   height: collapsed ? "50px" : "100px",
                   borderRadius: "50%",
                   transition: "width 0.3s ease, height 0.3s ease",
+                  border: "1px solid #e0dede",
+                  backgroundColor:"white",
                 }}
               />
             </div>
