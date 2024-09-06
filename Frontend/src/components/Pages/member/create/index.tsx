@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Space,
   Button,
@@ -22,11 +22,11 @@ function MemberCreate() {
   const [messageApi, contextHolder] = message.useMessage();
   const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
   const [ranks, setRanks] = useState<RankInterface[]>([]);
-  const myId = localStorage.getItem("id");
+  const employeeID = localStorage.getItem("id");
 
   const getEmployees = async () => {
     try {
-      const res = await GetEmployeeByID(myId); // Fetch data from the API
+      const res = await GetEmployeeByID(employeeID || ""); // Fetch data from the API
 
       if (res.status === 200) {
         setEmployees([res.data]); // Set the data from the API response, only the employee with myId
