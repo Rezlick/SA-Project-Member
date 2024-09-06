@@ -10,14 +10,20 @@ import {
   Card,
   message,
   Select,
+  Upload,
 } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+
 import { EmployeeInterface } from "../../../../interfaces/Employee";
 import { GenderInterface } from "../../../../interfaces/Gender";
 import { PositionInterface } from "../../../../interfaces/Position";
 import { GetEmployeeByID, UpdateEmployee, GetPositions, GetGenders } from "../../../../services/https";
 import { useNavigate, Link, useParams } from "react-router-dom";
 
+import type { GetProp, UploadFile, UploadProps } from "antd";
+import ImgCrop from "antd-img-crop";
 
+type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
 function EmployeeEdit() {
   const navigate = useNavigate();
@@ -28,6 +34,27 @@ function EmployeeEdit() {
 
   const [genders, setGenders] = useState<GenderInterface[]>([]);
   const [positions, setPositions] = useState<PositionInterface[]>([]); 
+
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+  const onPreview = async (file: UploadFile) => {
+    let src = file.url as string;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj as FileType);
+        reader.onload = () => resolve(reader.result as string);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow?.document.write(image.outerHTML);
+  };
 
   const getUserById = async (id: string) => {
     let res = await GetEmployeeByID(id);
@@ -83,6 +110,7 @@ function EmployeeEdit() {
   };
 
   const onFinish = async (values: EmployeeInterface) => {
+    values.Profile = fileList[0].thumbUrl;
     const res = await UpdateEmployee(id, values);
     if (res.status === 200) {
       messageApi.open({
@@ -125,6 +153,34 @@ function EmployeeEdit() {
           autoComplete="off"
         >
           <Row gutter={[16, 0]}>
+          <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+              <Form.Item
+                label="รูปประจำตัว"
+                name="Profile"
+                valuePropName="fileList"
+              >
+                <ImgCrop rotationSlider>
+                  <Upload
+                    fileList={fileList}
+                    onChange={onChange}
+                    onPreview={onPreview}
+                    beforeUpload={(file) => {
+                      setFileList([...fileList, file]);
+                      return false;
+                    }}
+                    maxCount={1}
+                    multiple={false}
+                    listType="picture-card"
+                  >
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>อัพโหลด</div>
+                    </div>
+                  </Upload>
+                </ImgCrop>
+              </Form.Item>
+            </Col>
+
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
                 label="ชื่อจริง"
