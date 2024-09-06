@@ -42,6 +42,7 @@ func CreateEmployee(c *gin.Context) {
 		LastName:   employee.LastName,  
 		Email:      employee.Email,     
 		Password:   hashedPassword,
+        Profile:    employee.Profile,
 		GenderID:   employee.GenderID,
 		Gender:     gender,
         PositionID: employee.PositionID,
