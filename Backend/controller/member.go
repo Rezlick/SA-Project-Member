@@ -49,7 +49,7 @@ func CreateMember(c *gin.Context) {
         c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
-    c.JSON(http.StatusCreated, gin.H{"message": "ลงทะเบียนสมาชิกสำเร็จ"})
+    c.JSON(http.StatusCreated, gin.H{"message": "สมัครสมาชิกสำเร็จ"})
 }
 
 func GetMembers(c *gin.Context) {
