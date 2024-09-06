@@ -10,6 +10,7 @@ type Employee struct{
 	LastName		string	
 	Email			string	
 	Password		string		
+	Profile   		string 		`gorm:"type:longtext"`
 
 	// FK from Gender
 	GenderID		uint
