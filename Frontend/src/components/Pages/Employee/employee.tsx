@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Space, Table, Button, Col, Row, Divider, message, Dropdown, Modal } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined, DashOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { GetEmployees, DeleteEmployeeByID } from "../../../services/https";
 import { EmployeeInterface } from "../../../interfaces/Employee";
@@ -19,6 +19,15 @@ function Employee() {
       title: "ลำดับ",
       dataIndex: "ID",
       key: "id",
+    },
+    {
+      title: "รูปประจำตัว",
+      dataIndex: "Profile",
+      key: "profile",
+      width: "15%",
+      render: (text, record, index) => (
+        <img src={record.Profile} className="profile" />
+      )
     },
     {
       title: "ชื่อ",
@@ -67,7 +76,7 @@ function Employee() {
             ],
           }}
         >
-          <button className="btn">...</button>
+          <Button type="primary" icon={<DashOutlined />} size={"small"} className="btn" />
         </Dropdown>
       ),
     },
@@ -144,7 +153,7 @@ function Employee() {
           rowKey="ID"
           columns={columns}
           dataSource={employees} // Data from the API
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 4 }}
           style={{ width: "100%", overflowX: "auto" }}
         />
       </div>
