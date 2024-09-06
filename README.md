@@ -26,5 +26,7 @@ npm install --save react-router-dom@6.x
 
 npm install antd --save
 
-npm instal axios --save
+npm install axios --save
+
+npm i antd-img-crop
 ```
