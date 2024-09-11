@@ -1,4 +1,4 @@
-import { Col, Row, Card, Statistic, Table } from "antd";
+import { Col, Row, Card, Statistic, Table, message } from "antd";
 import {
   AuditOutlined,
   UserOutlined,
@@ -6,6 +6,8 @@ import {
   StockOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
+import { GetMemberCount } from "../../../services/https";
+import { useEffect, useState } from "react";
 
 interface DataType {
   key: string;
@@ -22,51 +24,54 @@ const columns: ColumnsType<DataType> = [
   },
 
   {
-
     title: "ชื่อ",
-
     dataIndex: "FirstName",
-
     key: "firstname",
-
   },
 
   {
-
     title: "นามสกุุล",
-
     dataIndex: "LastName",
-
     key: "lastname",
-
   },
 
   {
-
     title: "อีเมล",
-
     dataIndex: "Email",
-
     key: "email",
-
   },
 
   {
-
     title: "เบอร์โทร",
-
     dataIndex: "Phone",
-
     key: "phone",
-
   },
 
 ];
 
-
 const data: DataType[] = [];
 
 export default function index() {
+  const [memberCount, setMemberCount] = useState<number>(0);
+
+  const getMemberCount = async () => {
+    try {
+      const res = await GetMemberCount(); // Fetch data from the API
+
+      if (res.status === 200) {
+        setMemberCount(res.data.memberCount || 0); // Set the data from the API response
+      } else {
+        message.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
+      }
+    } catch (error) {
+      message.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
+    }
+  };
+
+  useEffect(() => {
+    getMemberCount(); 
+  }, []);
+
   return (
     <>
       <Row gutter={[16, 16]}>
@@ -132,8 +137,8 @@ export default function index() {
                   }}
                 >
                   <Statistic
-                    title="จำนวน"
-                    value={10}
+                    title="จำนวนสมาชิก"
+                    value={memberCount}
                     valueStyle={{ color: "black" }}
                     prefix={<UserOutlined />}
                   />
