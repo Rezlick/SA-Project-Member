@@ -97,7 +97,7 @@ function Sider() {
   return (
     <>
       {contextHolder}
-      <Sider collapsed={collapsed}>
+      <Sider collapsed={collapsed} style={{backgroundColor:"#FF7D29"}}>
         <div
           style={{
             display: "flex",
@@ -153,8 +153,10 @@ function Sider() {
                 textAlign: "center",
               }}
             >
-              <span style={{ color: "white" }}>{firstName} {lastName}</span>
-              <span style={{ fontSize: "smaller", color: "white" }}>({positionName})</span>
+              <span style={{ fontSize: "large", color: "white" }}>{firstName} {lastName}</span>
+              <span style={{ fontSize: "default", color: "white" }}>({positionName})</span>
+              <span><Link to="/profileEdit" style={{ fontSize: "smaller", color: "white", textDecorationLine:"underline"}}>แก้ไขโปรไฟล์</Link></span>
+              
             </div>
 
             <Menu
