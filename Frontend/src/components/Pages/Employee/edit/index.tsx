@@ -132,9 +132,6 @@ function EmployeeEdit() {
     if (id) {
       getUserById(id);
     }
-
-    
-
     getGenders();
     getPositions();
   }, [id]);
