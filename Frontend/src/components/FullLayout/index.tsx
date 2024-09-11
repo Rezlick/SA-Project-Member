@@ -10,6 +10,7 @@ import Employee from "../Pages/Employee/employee";
 import EmployeeCreate from "../Pages/Employee/create";
 import EmployeeEdit from "../Pages/Employee/edit";
 import Sider from "../Sider/sider";
+import ProfileEdit from "../Pages/ProfileEdit/profileEdit";
 
 const {Content} = Layout;
 
@@ -27,10 +28,11 @@ const FullLayout: React.FC = () => {
   return (
     <>
     {contextHolder}
-    <Layout style={{ minHeight: "100vh"}}>
+    <Layout style={{ minHeight: "100vh", maxHeight:"100vh"}}>
       <Sider />
-      <Layout> 
-        <Content style={{ margin: "0 16px" }}>
+
+      <Layout style={{backgroundColor:"#FEFFD2"}}> 
+        <Content style={{ margin: "0 30px" }}>
           <Breadcrumb style={{ margin: "16px 0" }} />
           <div
             style={{
@@ -47,10 +49,12 @@ const FullLayout: React.FC = () => {
               <Route path="/employee" element={<Employee />} />
               <Route path="/employee/create" element={<EmployeeCreate />} />
               <Route path="/employee/edit/:id" element={<EmployeeEdit />} />
+              <Route path="/profileEdit" element={<ProfileEdit />} />
             </Routes>
           </div>
         </Content>
       </Layout>
+
     </Layout>
   </>
   );
