@@ -137,7 +137,7 @@ export default function index() {
                   }}
                 >
                   <Statistic
-                    title="จำนวนสมาชิก"
+                    title="จำนวนการสมัครสมาชิก"
                     value={memberCount}
                     valueStyle={{ color: "black" }}
                     prefix={<UserOutlined />}
