@@ -66,6 +66,17 @@ function EmployeeEdit() {
         GenderID: res.data.GenderID,
         PositionID: res.data.PositionID,
       });
+
+      if (res.data.Profile) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'profile-image.png',
+            status: 'done',
+            url: res.data.Profile, // Set the profile image URL
+          },
+        ]);
+      }
     } else {
       messageApi.open({
         type: "error",
@@ -161,10 +172,6 @@ function EmployeeEdit() {
                     fileList={fileList}
                     onChange={onChange}
                     onPreview={onPreview}
-                    beforeUpload={(file) => {
-                      setFileList([...fileList, file]);
-                      return false;
-                    }}
                     maxCount={1}
                     multiple={false}
                     listType="picture-card"
