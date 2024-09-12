@@ -190,7 +190,7 @@ function Sider() {
               </Menu.Item>
 
               <Menu.Item key="payment" onClick={() => setCurrentPage("payment")}>
-                <Link to="/">
+                <Link to="/payment">
                   <DollarOutlined />
                   <span>ชำระเงิน</span>
                 </Link>
