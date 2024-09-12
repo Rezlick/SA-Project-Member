@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Space, Table, Button, Col, Row, Divider, message, Dropdown, Modal } from "antd";
+import { Space, Table, Button, Col, Row, Divider, message, Dropdown, Modal, Progress } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined, DashOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import { GetMembers, DeleteMemberByID } from "../../../services/https/index";
@@ -30,14 +30,30 @@ function Member() {
       key: "last_name",
     },
     {
-      title: "เบอร์โทรศัพท์",
-      dataIndex: "PhoneNumber",
-      key: "phone_number",
-    },
-    {
       title: "ระดับสมาชิก",
       key: "Rank",
       render: (record) => <>{record.Rank?.Name || "N/A"}</>,
+    },
+    {
+      title: "แต้มสมาชิก",
+      key: "Points",
+      width: "25%",
+      render: (record) => {
+        const currentPoints = record.Point || 0;
+        const maxPoints = record.Rank?.PointToUpgrade || 0;
+        const percentage = maxPoints > 0 ? (currentPoints / maxPoints) * 100 : 0;
+
+        return (
+          <div style={{ width: 300 }}>
+            <Progress
+              strokeColor="#FF7D29"
+              percent={percentage}
+              format={() => `${currentPoints}/${maxPoints}`}
+              size={[300, 20]}
+            />
+          </div>
+        );
+      },
     },
     {
       title: "สมัครโดย",
@@ -114,7 +130,7 @@ function Member() {
   };
 
   useEffect(() => {
-    getMembers(); // Fetch members when the component mounts
+    getMembers(); 
   }, []);
 
   return (
@@ -153,6 +169,7 @@ function Member() {
         visible={isModalVisible}
         onOk={handleDeleteMember}
         onCancel={() => setIsModalVisible(false)}
+        okType="danger"
         okText="ลบ"
         cancelText="ยกเลิก"
       >
