@@ -118,3 +118,57 @@ func DeleteMember(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ลบข้อมูลสำเร็จ"})
 }
+
+func GetMemberCountToday(c *gin.Context) {
+    var count int64
+
+    db := config.DB()
+    // Select members created in the last 24 hours using the `created_at` column
+    result := db.Raw("SELECT COUNT(id) FROM members WHERE created_at >= DATETIME(SUBSTR(created_at, 1, 19), '-1 day')").Scan(&count)
+    
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"memberCount": count})
+}
+
+func AddPointsToMember(c *gin.Context) {
+    var pointsToAdd struct {
+        Points int `json:"points"`
+    }
+    memberID := c.Param("id")
+
+    // Bind JSON payload (points)
+    if err := c.ShouldBindJSON(&pointsToAdd); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload"})
+        return
+    }
+
+    // Check if points are valid (positive)
+    if pointsToAdd.Points <= 0 {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Points must be greater than 0"})
+        return
+    }
+
+    db := config.DB()
+    var member entity.Member
+
+    // Find the member by ID
+    if err := db.First(&member, memberID).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Member not found"})
+        return
+    }
+
+    // Add points to the member's existing points
+    member.Point += pointsToAdd.Points
+
+    // Save the updated member
+    if err := db.Save(&member).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update member"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Points added successfully", "updatedPoints": member.Point})
+}
