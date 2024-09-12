@@ -116,7 +116,7 @@ function EmployeeCreate() {
         <h2>ลงทะเบียนพนักงาน</h2>
         <Divider />
         <Form name="basic" layout="vertical" onFinish={onFinish} autoComplete="off">
-          <Row gutter={[16, 0]}>
+          <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={24} lg={24} xl={24}>
               <Form.Item
                 label="รูปประจำตัว"
@@ -125,13 +125,10 @@ function EmployeeCreate() {
               >
                 <ImgCrop rotationSlider>
                   <Upload
+                    action="https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload"
                     fileList={fileList}
                     onChange={onChange}
                     onPreview={onPreview}
-                    beforeUpload={(file) => {
-                      setFileList([...fileList, file]);
-                      return false;
-                    }}
                     maxCount={1}
                     multiple={false}
                     listType="picture-card"
