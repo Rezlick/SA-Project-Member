@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import React from "react";
 import { RouteObject } from "react-router-dom";
-import MinimalLayout from "../components/MinimalLayout";
+import MinimalLayout from "../components/MinimalLayout/minimalLayout";
 import Loadable from "../components/third-party/Loadable";
 
 
