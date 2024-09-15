@@ -1,3 +1,4 @@
+import { ChangePasswordInterface } from "../../interfaces/ChangePassword";
 import { EmployeeInterface } from "../../interfaces/Employee";
 import { LoginInterface } from "../../interfaces/Login";
 import { MemberInterface } from "../../interfaces/Member";
@@ -114,7 +115,7 @@ async function GetRanks() {
 
 async function GetMemberCount() {
   return await axios
-    .get(`${apiUrl}/memberCountToday`, requestOptions)
+    .get(`${apiUrl}/memberCountThisMonth`, requestOptions)
     .then((res) => res)
     .catch((e) => e.response);
 }
@@ -137,6 +138,18 @@ async function AddPointsToMember(memberID: string, points: number) {
     .catch((e) => e.response);
 }
 
+async function changePassword(employeeID: string, payload: ChangePasswordInterface) {
+  return await axios
+    .patch(
+      `${apiUrl}/employee/${employeeID}/changePassword`, // Fix the endpoint URL typo
+      payload, // Send the payload directly, no need to wrap in another object
+      requestOptions
+    )
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
+
 export {
   SignIn,
   CreateEmployee,
@@ -155,4 +168,5 @@ export {
   GetMemberCount,
   GetReceipts,
   AddPointsToMember,
+  changePassword,
 };
