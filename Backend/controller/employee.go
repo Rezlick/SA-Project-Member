@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+    "golang.org/x/crypto/bcrypt"
 	"github.com/Rezlick/SA_Project_Member/config"
 	"github.com/Rezlick/SA_Project_Member/entity"
 	"github.com/gin-gonic/gin"
@@ -120,4 +121,59 @@ func DeleteEmployee(c *gin.Context) {
        return
    }
    c.JSON(http.StatusOK, gin.H{"message": "ลบข้อมูลสำเร็จ"})
+}
+
+func ChangePassword(c *gin.Context) {
+    var employee entity.Employee
+    employeeID := c.Param("id")
+
+    // Struct for receiving JSON payload
+    var payload struct {
+        OldPassword     string `json:"old_password"`
+        NewPassword     string `json:"new_password"`
+        ConfirmPassword string `json:"confirm_password"`
+    }
+
+    db := config.DB()
+    result := db.First(&employee, employeeID)
+    if result.Error != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Employee ID not found"})
+        return
+    }
+
+    // Bind the incoming JSON to the payload struct
+    if err := c.ShouldBindJSON(&payload); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload"})
+        return
+    }
+
+    // Verify that old password is correct
+    err := bcrypt.CompareHashAndPassword([]byte(employee.Password), []byte(payload.OldPassword))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect current password"})
+        return
+    }
+
+    // Check if new password and confirm password match
+    if payload.NewPassword != payload.ConfirmPassword {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "New passwords do not match"})
+        return
+    }
+
+    // Hash the new password
+    hashedPassword, err := config.HashPassword(payload.NewPassword)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash the new password"})
+        return
+    }
+
+    // Update the employee's password in the database
+    result = db.Model(&employee).Update("password", hashedPassword)
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update the password"})
+        return
+    }
+
+    // Respond with success message
+    c.JSON(http.StatusOK, gin.H{"message": "Password successfully changed"})
 }
