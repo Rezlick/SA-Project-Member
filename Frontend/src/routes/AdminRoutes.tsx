@@ -2,18 +2,18 @@ import { lazy } from "react";
 import { RouteObject } from "react-router-dom";
 import Loadable from "../components/third-party/Loadable";
 
-import FullLayout from "../components/FullLayout";
+import FullLayout from "../components/FullLayout/fullLayout";
 
 const MainPages = Loadable(lazy(() => import("../components/Pages/login/login")));
 const Dashboard = Loadable(lazy(() => import("../components/Pages/dashboard/dashboard")));
 
 const Member = Loadable(lazy(() => import("../components/Pages/member/member")));
-const CreateMember = Loadable(lazy(() => import("../components/Pages/member/create")));
-const EditMember = Loadable(lazy(() => import("../components/Pages/member/edit")));
+const CreateMember = Loadable(lazy(() => import("../components/Pages/member/create/createMember")));
+const EditMember = Loadable(lazy(() => import("../components/Pages/member/edit/editMember")));
 
 const Employee = Loadable(lazy(() => import("../components/Pages/Employee/employee")));
-const CreateEmployee = Loadable(lazy(() => import("../components/Pages/Employee/create")));
-const EditEmployee = Loadable(lazy(() => import("../components/Pages/Employee/edit")));
+const CreateEmployee = Loadable(lazy(() => import("../components/Pages/Employee/create/createEmployee")));
+const EditEmployee = Loadable(lazy(() => import("../components/Pages/Employee/edit/editEmployee")));
 
 const ProfileEdit = Loadable(lazy(() => import("../components/Pages/ProfileEdit/profileEdit")))
 const ChangePassword = Loadable(lazy(() => import("../components/Pages/ProfileEdit/changePassword")))
