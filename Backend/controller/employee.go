@@ -175,5 +175,5 @@ func ChangePassword(c *gin.Context) {
     }
 
     // Respond with success message
-    c.JSON(http.StatusOK, gin.H{"message": "Password successfully changed"})
+    c.JSON(http.StatusOK, gin.H{"message": "เปลี่ยนรหัสผ่านสำเร็จ"})
 }
