@@ -12,6 +12,7 @@ import EmployeeEdit from "../Pages/Employee/edit";
 import Sider from "../Sider/sider";
 import ProfileEdit from "../Pages/ProfileEdit/profileEdit";
 import Payment from "../Pages/Payment/payment";
+import ChangePassword from "../Pages/ProfileEdit/changePassword";
 
 const {Content} = Layout;
 
@@ -51,6 +52,7 @@ const FullLayout: React.FC = () => {
               <Route path="/employee/create" element={<EmployeeCreate />} />
               <Route path="/employee/edit/:id" element={<EmployeeEdit />} />
               <Route path="/profileEdit" element={<ProfileEdit />} />
+              <Route path="/changePassword" element={<ChangePassword />} />
               <Route path="/payment" element={<Payment />} />
             </Routes>
           </div>
