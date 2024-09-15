@@ -5,7 +5,7 @@ import Loadable from "../components/third-party/Loadable";
 import FullLayout from "../components/FullLayout";
 
 const MainPages = Loadable(lazy(() => import("../components/Pages/login/login")));
-const Dashboard = Loadable(lazy(() => import("../components/Pages/dashboard")));
+const Dashboard = Loadable(lazy(() => import("../components/Pages/dashboard/dashboard")));
 
 const Member = Loadable(lazy(() => import("../components/Pages/member/member")));
 const CreateMember = Loadable(lazy(() => import("../components/Pages/member/create")));
