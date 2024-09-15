@@ -6,6 +6,7 @@ import FullLayout from "../components/FullLayout";
 
 const MainPages = Loadable(lazy(() => import("../components/Pages/login/login")));
 const Dashboard = Loadable(lazy(() => import("../components/Pages/dashboard")));
+
 const Member = Loadable(lazy(() => import("../components/Pages/member/member")));
 const CreateMember = Loadable(lazy(() => import("../components/Pages/member/create")));
 const EditMember = Loadable(lazy(() => import("../components/Pages/member/edit")));
@@ -13,6 +14,11 @@ const EditMember = Loadable(lazy(() => import("../components/Pages/member/edit")
 const Employee = Loadable(lazy(() => import("../components/Pages/Employee/employee")));
 const CreateEmployee = Loadable(lazy(() => import("../components/Pages/Employee/create")));
 const EditEmployee = Loadable(lazy(() => import("../components/Pages/Employee/edit")));
+
+const ProfileEdit = Loadable(lazy(() => import("../components/Pages/ProfileEdit/profileEdit")))
+const ChangePassword = Loadable(lazy(() => import("../components/Pages/ProfileEdit/changePassword")))
+
+const Payment = Loadable(lazy(() => import("../components/Pages/Payment/payment")))
 
 const AdminRoutes = (isLoggedIn : boolean): RouteObject => {
   return {
@@ -22,6 +28,18 @@ const AdminRoutes = (isLoggedIn : boolean): RouteObject => {
       {
         path: "/",
         element: <Dashboard />,
+      },
+      {
+        path: "/profileEdit",
+        element: <ProfileEdit />,
+      },
+      {
+        path: "/changePassword",
+        element: <ChangePassword />,
+      },
+      {
+        path: "/payment",
+        element: <Payment />,
       },
       {
         path: "/member",
