@@ -112,7 +112,30 @@ async function GetRanks() {
     .catch((e) => e.response);
 }
 
+async function GetMemberCount() {
+  return await axios
+    .get(`${apiUrl}/memberCountToday`, requestOptions)
+    .then((res) => res)
+    .catch((e) => e.response);
+}
 
+async function GetReceipts() {
+  return await axios
+  .get(`${apiUrl}/receipt`, requestOptions)
+  .then((res) => res)
+  .catch((e) => e.response);
+}
+
+async function AddPointsToMember(memberID: string, points: number) {
+  return await axios
+    .patch(
+      `${apiUrl}/member/${memberID}/addPoints`,
+      { points }, 
+      requestOptions
+    )
+    .then((res) => res)
+    .catch((e) => e.response);
+}
 
 export {
   SignIn,
@@ -128,5 +151,8 @@ export {
   DeleteMemberByID,
   GetGenders,
   GetPositions,
-  GetRanks
+  GetRanks,
+  GetMemberCount,
+  GetReceipts,
+  AddPointsToMember,
 };
