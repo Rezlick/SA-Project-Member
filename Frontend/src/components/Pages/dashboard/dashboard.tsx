@@ -52,8 +52,29 @@ const columns: ColumnsType<DataType> = [
 const data: DataType[] = [];
 
 export default function index() {
+  const [form] = Form.useForm();
+
   const [memberCount, setMemberCount] = useState<number>(0);
   const currentMonth = new Intl.DateTimeFormat('th-TH', { month: 'long' }).format(new Date());
+
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [selectedYear, setSelectedYear] = useState(null);
+
+  const currentYear = new Date().getFullYear();
+  
+  // Generate year options from the current year to 2 years ago
+  const yearOptions = [];
+  for (let i = 0; i <= 2; i++) {
+    yearOptions.push({ value: currentYear - i, label: (currentYear - i).toString() });
+  }
+
+  const handleMonthChange = (value: any, option: any) => {
+    setSelectedMonth(option.label);
+  };
+
+  const handleYearChange = (value: any, option: any) => {
+    setSelectedYear(option.label);
+  };
 
   const getMemberCountForCurrrentMonth = async () => {
     try {
@@ -150,77 +171,64 @@ export default function index() {
           </Card>
         </Col>
 
-        <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-          <h3>สถิติในเดือน</h3>
-        </Col>
-        <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-          <Form.Item
-            name="MonthID"
-            rules={[
-              {
-                required: true,
-                message: "กรุณาเลือกเดือน!",
-              },
+    
+      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+        <h3>สถิติในเดือน {selectedMonth ? `${selectedMonth}` : '...'} ปี {selectedYear ? `${selectedYear}` : '...'}</h3>
+      </Col>
+      <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+        <Form.Item
+          name="MonthID"
+          rules={[
+            {
+              required: true,
+              message: "กรุณาเลือกเดือน!",
+            },
+          ]}
+        >
+          <Select
+            placeholder="กรุณาเลือกเดือน"
+            style={{ width: "100%" }}
+            options={[
+              { value: 1, label: "มกราคม" },
+              { value: 2, label: "กุมภาพันธ์" },
+              { value: 3, label: "มีนาคม" },
+              { value: 4, label: "เมษายน" },
+              { value: 5, label: "พฤษภาคม" },
+              { value: 6, label: "มิถุนายน" },
+              { value: 7, label: "กรกฎาคม" },
+              { value: 8, label: "สิงหาคม" },
+              { value: 9, label: "กันยายน" },
+              { value: 10, label: "ตุลาคม" },
+              { value: 11, label: "พฤศจิกายน" },
+              { value: 12, label: "ธันวาคม" },
             ]}
-          >
-            <Select
-              placeholder="กรุณาเลือกเดือน"
-              style={{ width: "100%" }}
-              options={[
-                { value: 1, label: "มกราคม" },
-                { value: 2, label: "กุมภาพันธ์" },
-                { value: 3, label: "มีนาคม" },
-                { value: 4, label: "เมษายน" },
-                { value: 5, label: "พฤษภาคม" },
-                { value: 6, label: "มิถุนายน" },
-                { value: 7, label: "กรกฎาคม" },
-                { value: 8, label: "สิงหาคม" },
-                { value: 9, label: "กันยายน" },
-                { value: 10, label: "ตุลาคม" },
-                { value: 11, label: "พฤศจิกายน" },
-                { value: 12, label: "ธันวาคม" }
-              ]}
-
-            />
-          </Form.Item>
-          </Col>
-          <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-          <Form.Item
-            name="MonthID"
-            rules={[
-              {
-                required: true,
-                message: "กรุณาเลือกเดือน!",
-              },
-            ]}
-          >
-            <Select
-              placeholder="กรุณาเลือกปี"
-              style={{ width: "100%" }}
-              options={[
-                { value: 1, label: "มกราคม" },
-                { value: 2, label: "กุมภาพันธ์" },
-                { value: 3, label: "มีนาคม" },
-                { value: 4, label: "เมษายน" },
-                { value: 5, label: "พฤษภาคม" },
-                { value: 6, label: "มิถุนายน" },
-                { value: 7, label: "กรกฎาคม" },
-                { value: 8, label: "สิงหาคม" },
-                { value: 9, label: "กันยายน" },
-                { value: 10, label: "ตุลาคม" },
-                { value: 11, label: "พฤศจิกายน" },
-                { value: 12, label: "ธันวาคม" }
-              ]}
-
-            />
-          </Form.Item>
-        </Col>
-
+            onChange={handleMonthChange}
+          />
+        </Form.Item>
+      </Col>
+    
+      <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+        <Form.Item
+          name="YearID"
+          rules={[
+            {
+              required: true,
+              message: "กรุณาเลือกเดือน!",
+            },
+          ]}
+        >
+          <Select
+            placeholder="กรุณาเลือกปี"
+            style={{ width: "100%" }}
+            options={yearOptions}
+            onChange={handleYearChange}
+          />
+        </Form.Item>
+      </Col>
       
-
-        <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-          <Table columns={columns} dataSource={data} />
-        </Col>
+      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+        <Table columns={columns} dataSource={data} />
+      </Col>
       </Row>
     </>
   );
