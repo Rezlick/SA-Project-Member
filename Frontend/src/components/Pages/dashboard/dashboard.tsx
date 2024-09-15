@@ -36,15 +36,9 @@ const columns: ColumnsType<DataType> = [
   },
 
   {
-    title: "อีเมล",
-    dataIndex: "Email",
+    title: "จำนวนการสมัครสมาชิก",
+    dataIndex: "MemberCount",
     key: "email",
-  },
-
-  {
-    title: "เบอร์โทร",
-    dataIndex: "Phone",
-    key: "phone",
   },
 
 ];
