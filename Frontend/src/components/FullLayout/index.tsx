@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import "../../App.css";
 import { Breadcrumb, Layout, Menu, theme, message } from "antd";
-import Dashboard from "../Pages/dashboard";
+import Dashboard from "../Pages/dashboard/dashboard";
 import Member from "../Pages/member/member";
 import MemberCreate from "../Pages/member/create";
 import MemberEdit from "../Pages/member/edit";
@@ -25,7 +25,6 @@ const FullLayout: React.FC = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-
 
   return (
     <>
