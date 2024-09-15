@@ -136,7 +136,7 @@ func GetMemberCountToday(c *gin.Context) {
 
 func AddPointsToMember(c *gin.Context) {
     var pointsToAdd struct {
-        Points int `json:"points"`
+        Points int 
     }
     memberID := c.Param("id")
 
