@@ -33,7 +33,7 @@ function ProfileEdit() {
   const [form] = Form.useForm();
 
   const [genders, setGenders] = useState<GenderInterface[]>([]);
-  const [positions, setPositions] = useState<PositionInterface[]>([]); 
+
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
@@ -64,15 +64,25 @@ function ProfileEdit() {
         LastName: res.data.LastName,
         Email: res.data.Email,
         GenderID: res.data.GenderID,
-        PositionID: res.data.PositionID,
       });
+
+      if (res.data.Profile) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'profile-image.png',
+            status: 'done',
+            url: res.data.Profile, // Set the profile image URL
+          },
+        ]);
+      }
     } else {
       messageApi.open({
         type: "error",
         content: "ไม่พบข้อมูลผู้ใช้",
       });
       setTimeout(() => {
-        navigate("/employee");
+        navigate("/");
       }, 2000);
     }
   };
@@ -89,22 +99,6 @@ function ProfileEdit() {
       }
     } catch (error) {
       setGenders([]);
-      messageApi.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
-    }
-  };
-
-  const getPositions = async () => {
-    try {
-      const res = await GetPositions(); // Fetch data from the API
-
-      if (res.status === 200) {
-        setPositions(res.data); // Set the data from the API response
-      } else {
-        setPositions([]);
-        messageApi.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
-      }
-    } catch (error) {
-      setPositions([]);
       messageApi.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
     }
   };
@@ -136,7 +130,7 @@ function ProfileEdit() {
     
 
     getGenders();
-    getPositions();
+
   }, [id]);
 
   return (
@@ -164,10 +158,6 @@ function ProfileEdit() {
                     fileList={fileList}
                     onChange={onChange}
                     onPreview={onPreview}
-                    beforeUpload={(file) => {
-                      setFileList([...fileList, file]);
-                      return false;
-                    }}
                     maxCount={1}
                     multiple={false}
                     listType="picture-card"
@@ -212,39 +202,9 @@ function ProfileEdit() {
             </Col>
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-              <Form.Item
-                label="เพศ"
-                name="GenderID"
-                rules={[
-                  {
-                    required: true,
-                    message: "กรุณาเลือกเพศ !",
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="เลือกเพศ"
-                  style={{ width: "100%" }}
-                  options={genders.map((gender) => ({
-                    value: gender.ID,
-                    label: gender.Name, 
-                  }))}
-                />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-              <Form.Item
-                label="รหัสผ่านใหม่"
-                name="Password"
-                rules={[
-                  {
-                    message: "กรุณากรอกนามสกุล !",
-                  },
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
+              <Link to ="/changePassword">
+                <Button>เปลี่ยนรหัสผ่าน</Button>
+              </Link>
             </Col>
           </Row>
 
