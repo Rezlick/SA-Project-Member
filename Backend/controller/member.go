@@ -27,12 +27,12 @@ func CreateMember(c *gin.Context) {
 	}
 
     // ค้นหา employee ด้วย id
-	var employee entity.Employee
-	db.First(&employee, member.EmployeeID)
-	if employee.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "employee not found"})
-		return
-	}
+    var employee entity.Employee
+    db.First(&employee, member.EmployeeID)
+    if employee.ID == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"error": "employee not found"})
+        return
+    }
 
     // สร้าง Member
     m := entity.Member {
@@ -42,7 +42,7 @@ func CreateMember(c *gin.Context) {
 	    RankID:     member.RankID,		
 	    Rank:       rank,					
 	    EmployeeID: member.EmployeeID,				
-	    Employee:   employee,		
+        Employee:    employee,
     }
 
     if err := db.Create(&m).Error; err != nil {
@@ -119,12 +119,12 @@ func DeleteMember(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "ลบข้อมูลสำเร็จ"})
 }
 
-func GetMemberCountToday(c *gin.Context) {
+func GetMemberCountThisMonth(c *gin.Context) {
     var count int64
 
     db := config.DB()
-    // Select members created in the last 24 hours using the `created_at` column
-    result := db.Raw("SELECT COUNT(id) FROM members WHERE created_at >= DATETIME(SUBSTR(created_at, 1, 19), '-1 day')").Scan(&count)
+    // Select members created in the current month
+    result := db.Raw("SELECT COUNT(id) FROM members WHERE strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')").Scan(&count)
     
     if result.Error != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
@@ -163,6 +163,7 @@ func AddPointsToMember(c *gin.Context) {
 
     // Add points to the member's existing points
     member.Point += pointsToAdd.Points
+    db.Exec(`UPDATE members SET point = ? WHERE id = ? `)
 
     // Save the updated member
     if err := db.Save(&member).Error; err != nil {
