@@ -277,91 +277,50 @@ function Payment() {
 
   return (
     <>
-    {contextHolder}
-    <Row gutter={[16, 16]}>
-      {/* Content Section */}
-      <Col span={12}>
-        <Card style={{ borderRadius: '20px', padding: '0px', width: 'auto', height: '100%' }}>
-          <h3 style={{ marginTop: '-3px' }}>Receipt History</h3>
-          <Table
-            dataSource={receipt}
-            columns={columns}
-            rowClassName={(_, index) => (index % 2 === 0 ? 'even-row' : 'odd-row')}
-            pagination={{ pageSize: 5 }}
-          />
-        </Card>
-      </Col>
-      {/* Button Section */}
-      <Col span={12} >
-              <Card style={{ borderRadius: '20px', width: '100%', height: '30vh' , marginBottom:'10px'}}>
-          <h3 style={{ marginTop: '-3px' }}>Daily List Summary</h3>
-          <Row
-            style={{
-              display: 'flex',
-              justifyContent: 'space-around',
-              alignItems: 'center',
-            }}
-          >
-            <Col xs={24} sm={24} md={12} lg={12} xl={7}>
-              <Card
-                style={{
-                  boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-                  borderRadius: '20px',
-                }}
-              >
-                <Statistic
-                  title="กำลังดำเนินการ"
-                  value={5}
-                  valueStyle={{ color: "black" }}
-                  prefix={<FileSyncOutlined />}
-                  suffix=""
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={24} md={12} lg={12} xl={7}>
-              <Card
-                style={{
-                  boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-                  borderRadius: '20px',
-                }}
-              >
-                <Statistic
-                  title="ทำรายการสำเร็จ"
-                  value={SuccessValue}
-                  valueStyle={{ color: "black" }}
-                  prefix={<FileDoneOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={24} md={12} lg={12} xl={7}>
-              <Card
-                style={{
-                  boxShadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px",
-                  borderRadius: '20px',
-                }}
-              >
-                <Statistic
-                  title="รายได้รวม"
-                  value={TotalPrice}
-                  valueStyle={{ color: "black"}}
-                  prefix={<WalletOutlined style={{ marginRight: '8px' }}/>}
-                  suffix={<span style={{ marginLeft: '2px' }}>฿</span>}
-                />
-              </Card>
-            </Col>
-          </Row>
-        </Card>
-
-        <Card style={{ borderRadius: '20px', height: 'auto' }}>
-          <Card style={{ backgroundColor: "#F5F5F5", height: 'auto' , borderRadius:'20px' }}>
-            <Row gutter={[16, 16]}>
-              {buttons}
+      {contextHolder}
+      <Row gutter={[16, 16]} style={{ height: "80vh" }}>
+        <Col xs={24} md={12}>
+          <Card style={{ borderRadius: '20px', padding: '0px', height: 'auto' }}>
+            <h3>Receipt History</h3>
+            <Table
+              dataSource={receipt}
+              columns={columns}
+              rowClassName={(_, index) => (index % 2 === 0 ? 'even-row' : 'odd-row')}
+              pagination={{ pageSize: 5 }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} md={12}>
+          <Card style={{ borderRadius: '20px', marginBottom: '10px' }}>
+            <h3>Daily List Summary</h3>
+            <Row justify="space-around" align="middle">
+              <Col xs={24} sm={12} md={7}>
+                <Card style={{ borderRadius: '20px', boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' }}>
+                  <Statistic title="กำลังดำเนินการ" value={5} prefix={<FileSyncOutlined />} />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={7}>
+                <Card style={{ borderRadius: '20px', boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' }}>
+                  <Statistic title="ทำรายการสำเร็จ" value={SuccessValue} prefix={<FileDoneOutlined />} />
+                </Card>
+              </Col>
+              <Col xs={24} sm={12} md={7}>
+                <Card style={{ borderRadius: '20px', boxShadow: 'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px' }}>
+                  <Statistic title="รายได้รวม" value={TotalPrice} prefix={<WalletOutlined />} suffix="฿" />
+                </Card>
+              </Col>
             </Row>
           </Card>
-        </Card>
 
-      </Col>
-    </Row>
+          <Card style={{ borderRadius: '20px' }}>
+            <Card style={{ backgroundColor: "#F5F5F5", borderRadius: '20px' }}>
+              <Row gutter={[16, 8]}>
+                {buttons}
+              </Row>
+            </Card>
+          </Card>
+        </Col>
+      </Row>
    </> 
   );
 }
