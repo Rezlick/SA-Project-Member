@@ -1,77 +1,62 @@
 import { useEffect, useState } from "react";
-import {
-  Space,
-  Button,
-  Col,
-  Row,
-  Divider,
-  Form,
-  Input,
-  Card,
-  message,
-  Select,
-  Upload,
-} from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-
-import { EmployeeInterface } from "../../../interfaces/Employee";
-import { GenderInterface } from "../../../interfaces/Gender";
-import { GetEmployeeByID, UpdateEmployee } from "../../../services/https";
-import { useNavigate, Link } from "react-router-dom";
+import { Space, Button, Col, Row, Divider, Form, Input, Card, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { changePassword } from "../../../services/https"; // Import changePassword API function
 
 function ChangePassword() {
   const navigate = useNavigate();
-  const id = localStorage.getItem("id")
+  const id = localStorage.getItem("id"); // Assuming employee ID is stored in localStorage
   const [messageApi, contextHolder] = message.useMessage();
-
   const [form] = Form.useForm();
 
-
-  const getUserById = async (id: string) => {
-    let res = await GetEmployeeByID(id);
-    if (res.status === 200) {
-      form.setFieldsValue({
-        FirstName: res.data.FirstName,
-        LastName: res.data.LastName,
-        Email: res.data.Email,
-        GenderID: res.data.GenderID,
-        PositionID: res.data.PositionID,
-      });
-    } else {
+  const onFinish = async (values: { OldPassword: string; NewPassword: string; ConfirmPassword: string }) => {
+    if (values.NewPassword !== values.ConfirmPassword) {
       messageApi.open({
         type: "error",
-        content: "ไม่พบข้อมูลผู้ใช้",
+        content: "รหัสผ่านใหม่และการยืนยันไม่ตรงกัน",
       });
-      setTimeout(() => {
-        navigate("/");
-      }, 2000);
+      return;
     }
-  };
 
-  const onFinish = async (values: EmployeeInterface) => {
-    const res = await UpdateEmployee(id || "", values);
-    if (res.status === 200) {
-      messageApi.open({
-        type: "success",
-        content: res.data.message,
-      });
-      setTimeout(() => {
-        navigate("/employee");
-      }, 2000);
-    } else {
+    const payload = {
+      old_password: values.OldPassword,
+      new_password: values.NewPassword,
+      confirm_password: values.ConfirmPassword,
+    };
+
+    try {
+      const res = await changePassword(id || "", payload); // Pass the employee ID and payload
+      if (res.status === 200) {
+        messageApi.open({
+          type: "success",
+          content: res.data.message || "เปลี่ยนรหัสผ่านสำเร็จ",
+        });
+        setTimeout(() => {
+          navigate("/employee");
+        }, 2000);
+      } else {
+        messageApi.open({
+          type: "error",
+          content: res.data.error || "เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน",
+        });
+      }
+    } catch (error) {
       messageApi.open({
         type: "error",
-        content: res.data.error,
+        content: "เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์",
       });
     }
   };
 
   useEffect(() => {
-    if (id) {
-      getUserById(id);
+    if (!id) {
+      messageApi.open({
+        type: "error",
+        content: "ไม่พบข้อมูลผู้ใช้",
+      });
+      navigate("/profileEdit");
     }
-
-  }, [id]);
+  }, [id, navigate, messageApi]);
 
   return (
     <div>
@@ -79,55 +64,36 @@ function ChangePassword() {
       <Card>
         <h2>เปลี่ยนรหัสผ่าน</h2>
         <Divider />
-        <Form
-          name="basic"
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          autoComplete="off"
-        >
+        <Form form={form} layout="vertical" onFinish={onFinish} autoComplete="off">
           <Row gutter={[16, 0]}>
-
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-                <Form.Item
-                    label="รหัสผ่านใหม่"
-                    name="NewPassword"
-                    rules={[
-                    {
-                        required: true,
-                        message: "กรุณากรอกรหัสผ่านใหม่ !",
-                    },
-                    ]}
-                >
+            <Col xs={24} sm={24} md={12}>
+              <Form.Item
+                label="รหัสผ่านใหม่"
+                name="NewPassword"
+                rules={[
+                  { required: true, message: "กรุณากรอกรหัสผ่านใหม่ !" },
+                  { min: 6, message: "รหัสผ่านใหม่ต้องมีอย่างน้อย 6 ตัวอักษร" },
+                ]}
+              >
                 <Input.Password />
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-                <Form.Item
-                    label="ยืนยันรหัสผ่านใหม่"
-                    name="ConfirmPassword"
-                    rules={[
-                    {
-                        required: true,
-                        message: "กรุณายืนยันรหัสผ่านใหม่ !",
-                    },
-                    ]}
-                >
+            <Col xs={24} sm={24} md={12}>
+              <Form.Item
+                label="ยืนยันรหัสผ่านใหม่"
+                name="ConfirmPassword"
+                rules={[{ required: true, message: "กรุณายืนยันรหัสผ่านใหม่ !" }]}
+              >
                 <Input.Password />
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+            <Col xs={24} sm={24} md={12}>
               <Form.Item
                 label="รหัสผ่านเดิม"
                 name="OldPassword"
-                rules={[
-                  {
-                    required: true,
-                    message: "กรุณากรอกรหัสผ่านเดิม !",
-                  },
-                ]}
+                rules={[{ required: true, message: "กรุณากรอกรหัสผ่านเดิม !" }]}
               >
                 <Input.Password />
               </Form.Item>
@@ -144,11 +110,7 @@ function ChangePassword() {
                     </Button>
                   </Link>
 
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{backgroundColor:"#FF7D29"}}
-                  >
+                  <Button type="primary" htmlType="submit" style={{ backgroundColor: "#FF7D29" }}>
                     บันทึก
                   </Button>
                 </Space>
