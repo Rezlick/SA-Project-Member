@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Space, Button, Col, Row, Divider, Form, Input, Card, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import { changePassword } from "../../../services/https"; // Import changePassword API function
+import { changePassword } from "../../../services/https";
 
 function ChangePassword() {
   const navigate = useNavigate();
-  const id = localStorage.getItem("id"); // Assuming employee ID is stored in localStorage
+  const id = localStorage.getItem("id"); 
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
@@ -25,14 +25,14 @@ function ChangePassword() {
     };
 
     try {
-      const res = await changePassword(id || "", payload); // Pass the employee ID and payload
+      const res = await changePassword(id || "", payload); 
       if (res.status === 200) {
         messageApi.open({
           type: "success",
           content: res.data.message || "เปลี่ยนรหัสผ่านสำเร็จ",
         });
         setTimeout(() => {
-          navigate("/employee");
+          navigate("/");
         }, 2000);
       } else {
         messageApi.open({
