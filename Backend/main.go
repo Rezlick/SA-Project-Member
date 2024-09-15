@@ -49,6 +49,15 @@ func main() {
 
        // Rank Routes
        r.GET("/ranks", controller.GetRanks)
+
+       // MemberCount Routes
+       r.GET("/memberCountToday", controller.GetMemberCountToday)
+
+       // Receipt Routes
+       r.GET("/receipt", controller.GetReceipts)
+
+       // Add point route
+       r.PATCH("/member/:id/addPoints", controller.AddPointsToMember)
    }
 
    r.GET("/", func(c *gin.Context) {
