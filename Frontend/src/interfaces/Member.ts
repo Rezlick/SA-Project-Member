@@ -3,6 +3,7 @@ export interface MemberInterface {
     FirstName?: string;
     LastName?: string;
     PhoneNumber?: string;
+    Point?: number,
     RankID?: number;
     EmployeeID?: number;
 }
