@@ -119,7 +119,7 @@ func DeleteMember(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "ลบข้อมูลสำเร็จ"})
 }
 
-func GetMemberCountThisMonth(c *gin.Context) {
+func GetMemberCountForCurrentMonth(c *gin.Context) {
     var count int64
 
     db := config.DB()
@@ -163,7 +163,6 @@ func AddPointsToMember(c *gin.Context) {
 
     // Add points to the member's existing points
     member.Point += pointsToAdd.Points
-    db.Exec(`UPDATE members SET point = ? WHERE id = ? `)
 
     // Save the updated member
     if err := db.Save(&member).Error; err != nil {
@@ -172,4 +171,30 @@ func AddPointsToMember(c *gin.Context) {
     }
 
     c.JSON(http.StatusOK, gin.H{"message": "Points added successfully", "updatedPoints": member.Point})
+}
+
+func GetMemberCountForMonth(c *gin.Context) {
+    var count int64
+
+    // Get the month and year from query parameters
+    month := c.Query("month") // Expects "MM" format
+    year := c.Query("year")   // Expects "YYYY" format
+
+    if month == "" || year == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Month and year are required"})
+        return
+    }
+
+    db := config.DB()
+    
+    // Select members created in the specified month and year
+    query := "SELECT COUNT(id) FROM members WHERE strftime('%Y-%m', created_at) = ?"
+    result := db.Raw(query, year+"-"+month).Scan(&count)
+
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"memberCount": count})
 }
