@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "../../App.css";
 import { Breadcrumb, Layout, theme, message } from "antd";
@@ -9,18 +9,38 @@ import MemberEdit from "../Pages/member/edit/editMember";
 import Employee from "../Pages/Employee/employee";
 import EmployeeCreate from "../Pages/Employee/create/createEmployee";
 import EmployeeEdit from "../Pages/Employee/edit/editEmployee";
-import Sider from "../Sider/sider";
+import ITSider from "../Sider/ITSider";
+import ManagerSider from "../Sider/ManagerSider";
+import CommonSider from "../Sider/sider";
 import ProfileEdit from "../Pages/ProfileEdit/profileEdit";
 import Payment from "../Pages/Payment/payment";
 import ChangePassword from "../Pages/ProfileEdit/changePassword";
 
 const {Content} = Layout;
 
-
 const FullLayout: React.FC = () => {
 
   const [messageApi, contextHolder] = message.useMessage();
 
+  const positionID = localStorage.getItem("positionID"); 
+  let role = "";
+  if (positionID === '1') {
+    role = "IT"
+  } else if (positionID === '2'){
+    role = "Manager"
+  } else {
+    role = "Common"
+  }
+
+  const renderSider = () => {
+    if (role === "IT") {
+      return <ITSider />;
+    } else if (role === "Manager") {
+      return <ManagerSider />;
+    } else {
+      return <CommonSider />;
+    }
+  };
 
   const {
     token: { colorBgContainer },
@@ -30,7 +50,7 @@ const FullLayout: React.FC = () => {
     <>
     {contextHolder}
     <Layout style={{ minHeight: "100vh", maxHeight:"100vh"}}>
-      <Sider />
+      {renderSider()}
 
       <Layout style={{backgroundColor:"#FEFFD2", minHeight: "100vh", maxHeight:"100vh"}}> 
         <Content style={{ margin: "0 30px" }}>
@@ -43,7 +63,7 @@ const FullLayout: React.FC = () => {
             }}
           >
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/member" element={<Member />} />
               <Route path="/member/create" element={<MemberCreate />} />
               <Route path="/member/edit/:id" element={<MemberEdit />} />
