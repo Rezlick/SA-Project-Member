@@ -1,14 +1,14 @@
 package controller
 
 import (
+	"net/http"
 
-   "net/http"
-   "github.com/gin-gonic/gin"
-   "golang.org/x/crypto/bcrypt"
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 
-   "github.com/Rezlick/SA_Project_Member/config"
-   "github.com/Rezlick/SA_Project_Member/entity"
-   "github.com/Rezlick/SA_Project_Member/services"
+	"github.com/Rezlick/SA_Project_Member/config"
+	"github.com/Rezlick/SA_Project_Member/entity"
+	"github.com/Rezlick/SA_Project_Member/services"
 )
 
 type (
@@ -36,7 +36,7 @@ func SignIn(c *gin.Context) {
    // ตรวจสอบรหัสผ่าน
    err := bcrypt.CompareHashAndPassword([]byte(employee.Password), []byte(payload.Password))
    if err != nil {
-       c.JSON(http.StatusBadRequest, gin.H{"error": "password is incorrect"})
+       c.JSON(http.StatusBadRequest, gin.H{"error": "รหัสผ่านไม่ถูกต้อง"})
        return
    }
 
