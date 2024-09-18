@@ -150,13 +150,13 @@ func ChangePassword(c *gin.Context) {
     // Verify that old password is correct
     err := bcrypt.CompareHashAndPassword([]byte(employee.Password), []byte(payload.OldPassword))
     if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "Incorrect current password"})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "รหัสผ่านไม่ถูกต้อง"})
         return
     }
 
     // Check if new password and confirm password match
     if payload.NewPassword != payload.ConfirmPassword {
-        c.JSON(http.StatusBadRequest, gin.H{"error": "New passwords do not match"})
+        c.JSON(http.StatusBadRequest, gin.H{"error": "รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน"})
         return
     }
 
