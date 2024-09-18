@@ -6,76 +6,69 @@ import {
   StockOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import { GetMemberCount } from "../../../services/https";
+import { GetMemberCountForCurrentMonth, GetMemberCountForMonth } from "../../../services/https";
 import { useEffect, useState } from "react";
 
 interface DataType {
-  key: string;
-  name: string;
-  address: string;
-  tags: string[];
+  MemberCountForMonth: number;
 }
 
 const columns: ColumnsType<DataType> = [
   {
-    title: "ลำดับ",
-    dataIndex: "ID",
-    key: "id",
-  },
-
-  {
-    title: "ชื่อ",
-    dataIndex: "FirstName",
-    key: "firstname",
-  },
-
-  {
-    title: "นามสกุุล",
-    dataIndex: "LastName",
-    key: "lastname",
-  },
-
-  {
     title: "จำนวนการสมัครสมาชิก",
-    dataIndex: "MemberCount",
-    key: "email",
+    dataIndex: "MemberCountForMonth",
+    key: "MemberCountForMonth",
   },
-
 ];
 
-const data: DataType[] = [];
+export default function Dashboard() {
+  const [data, setData] = useState<DataType[]>([]);
 
-export default function index() {
-  const [form] = Form.useForm();
+  const [memberCountForCurrentMonth, setMemberCountForCurrentMonth] = useState<number>(0);
+  const [memberCountForMonth, setMemberCountForMonth] = useState<number>(0);
+  const [selectedMonth, setSelectedMonth] = useState<number | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
-  const [memberCount, setMemberCount] = useState<number>(0);
   const currentMonth = new Intl.DateTimeFormat('th-TH', { month: 'long' }).format(new Date());
-
-  const [selectedMonth, setSelectedMonth] = useState(null);
-  const [selectedYear, setSelectedYear] = useState(null);
-
   const currentYear = new Date().getFullYear();
-  
-  // Generate year options from the current year to 2 years ago
+
   const yearOptions = [];
   for (let i = 0; i <= 2; i++) {
     yearOptions.push({ value: currentYear - i, label: (currentYear - i).toString() });
   }
 
   const handleMonthChange = (value: any, option: any) => {
-    setSelectedMonth(option.label);
+    setSelectedMonth(value);
   };
 
   const handleYearChange = (value: any, option: any) => {
     setSelectedYear(option.label);
   };
 
-  const getMemberCountForCurrrentMonth = async () => {
+  const getMemberCountForCurrentMonth = async () => {
     try {
-      const res = await GetMemberCount(); // Fetch data from the API
+        const res = await GetMemberCountForCurrentMonth();
+        if (res.status === 200) {
+            setMemberCountForCurrentMonth(res.data.memberCount || 0);
+        } else {
+            message.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
+        }
+    } catch (error) {
+        message.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
+    }
+  };
 
+
+  const getMemberCountForMonth = async (month: number, year: number) => {
+    try {
+      // Ensure month is in "MM" format
+      const formattedMonth = month.toString().padStart(2, '0');
+      
+      const res = await GetMemberCountForMonth(formattedMonth, year.toString());
+      
       if (res.status === 200) {
-        setMemberCount(res.data.memberCount || 0); // Set the data from the API response
+        setMemberCountForMonth(res.data.memberCount || 0);
+        setData([{ MemberCountForMonth: res.data.memberCount || 0 }]);
       } else {
         message.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
       }
@@ -85,8 +78,14 @@ export default function index() {
   };
 
   useEffect(() => {
-    getMemberCountForCurrrentMonth(); 
+    getMemberCountForCurrentMonth(); 
   }, []);
+
+  useEffect(() => {
+    if (selectedMonth && selectedYear) {
+      getMemberCountForMonth(selectedMonth, selectedYear);
+    }
+  }, [selectedMonth, selectedYear]);
 
   return (
     <>
@@ -155,7 +154,7 @@ export default function index() {
                 >
                   <Statistic
                     title="จำนวนการสมัครสมาชิก"
-                    value={memberCount}
+                    value={memberCountForCurrentMonth}
                     valueStyle={{ color: "black" }}
                     prefix={<UserOutlined />}
                   />
@@ -165,64 +164,56 @@ export default function index() {
           </Card>
         </Col>
 
-    
-      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-        <h3>สถิติในเดือน {selectedMonth ? `${selectedMonth}` : '...'} ปี {selectedYear ? `${selectedYear}` : '...'}</h3>
-      </Col>
-      <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-        <Form.Item
-          name="MonthID"
-          rules={[
-            {
-              required: true,
-              message: "กรุณาเลือกเดือน!",
-            },
-          ]}
-        >
-          <Select
-            placeholder="กรุณาเลือกเดือน"
-            style={{ width: "100%" }}
-            options={[
-              { value: 1, label: "มกราคม" },
-              { value: 2, label: "กุมภาพันธ์" },
-              { value: 3, label: "มีนาคม" },
-              { value: 4, label: "เมษายน" },
-              { value: 5, label: "พฤษภาคม" },
-              { value: 6, label: "มิถุนายน" },
-              { value: 7, label: "กรกฎาคม" },
-              { value: 8, label: "สิงหาคม" },
-              { value: 9, label: "กันยายน" },
-              { value: 10, label: "ตุลาคม" },
-              { value: 11, label: "พฤศจิกายน" },
-              { value: 12, label: "ธันวาคม" },
-            ]}
-            onChange={handleMonthChange}
+        <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+          <h3>สถิติในเดือน {selectedMonth ? `${selectedMonth}` : '...'} ปี {selectedYear ? `${selectedYear}` : '...'}</h3>
+        </Col>
+        <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+          <Form.Item
+            name="MonthID"
+            rules={[{ required: true, message: "กรุณาเลือกเดือน!" }]}
+          >
+            <Select
+              placeholder="กรุณาเลือกเดือน"
+              style={{ width: "100%" }}
+              options={[
+                { value: 1, label: "มกราคม" },
+                { value: 2, label: "กุมภาพันธ์" },
+                { value: 3, label: "มีนาคม" },
+                { value: 4, label: "เมษายน" },
+                { value: 5, label: "พฤษภาคม" },
+                { value: 6, label: "มิถุนายน" },
+                { value: 7, label: "กรกฎาคม" },
+                { value: 8, label: "สิงหาคม" },
+                { value: 9, label: "กันยายน" },
+                { value: 10, label: "ตุลาคม" },
+                { value: 11, label: "พฤศจิกายน" },
+                { value: 12, label: "ธันวาคม" },
+              ]}
+              onChange={handleMonthChange}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={24} lg={24} xl={12}>
+          <Form.Item
+            name="YearID"
+            rules={[{ required: true, message: "กรุณาเลือกปี!" }]}
+          >
+            <Select
+              placeholder="กรุณาเลือกปี"
+              style={{ width: "100%" }}
+              options={yearOptions}
+              onChange={handleYearChange}
+            />
+          </Form.Item>
+        </Col>
+
+        <Col xs={24} sm={24} md={24} lg={24} xl={24}>
+          <Table  
+            columns={columns} 
+            dataSource={data} 
           />
-        </Form.Item>
-      </Col>
-    
-      <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-        <Form.Item
-          name="YearID"
-          rules={[
-            {
-              required: true,
-              message: "กรุณาเลือกเดือน!",
-            },
-          ]}
-        >
-          <Select
-            placeholder="กรุณาเลือกปี"
-            style={{ width: "100%" }}
-            options={yearOptions}
-            onChange={handleYearChange}
-          />
-        </Form.Item>
-      </Col>
-      
-      <Col xs={24} sm={24} md={24} lg={24} xl={24}>
-        <Table columns={columns} dataSource={data} />
-      </Col>
+        </Col>
       </Row>
     </>
   );
