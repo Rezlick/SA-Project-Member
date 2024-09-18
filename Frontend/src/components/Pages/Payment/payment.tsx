@@ -13,20 +13,6 @@ function Payment() {
   const [SuccessValue, setSuccessValue] = useState<number>(0);
   const [TotalPrice, setTotalPrice] = useState<number>(0);
 
-  const handleAddPoints = async (memberID: string, pointsToAdd: number) => {
-    try {
-      const res = await AddPointsToMember(memberID, pointsToAdd); // API call to add points
-      if (res.status === 200) {
-        messageApi.success(`เพิ่ม ${pointsToAdd} แต้มให้สมาชิกสำเร็จ`);
-        await GetMembers(); // Refresh member list after adding points
-      } else {
-        messageApi.error(res.data.error || "ไม่สามารถเพิ่มแต้มได้");
-      }
-    } catch (error) {
-      messageApi.error("เกิดข้อผิดพลาดในการเพิ่มแต้ม");
-    }
-  };
-
   const getReceipts = async () => {
     try {
       const res = await GetReceipts(); // Fetch data from the API
