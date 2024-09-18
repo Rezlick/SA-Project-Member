@@ -113,9 +113,16 @@ async function GetRanks() {
     .catch((e) => e.response);
 }
 
-async function GetMemberCount() {
+async function GetMemberCountForCurrentMonth() {
   return await axios
-    .get(`${apiUrl}/memberCountThisMonth`, requestOptions)
+    .get(`${apiUrl}/memberCountForCurrentMonth`, requestOptions)
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
+async function GetMemberCountForMonth(month: string, year: string) {
+  return await axios
+    .get(`${apiUrl}/memberCountForMonth?month=${month}&year=${year}`, requestOptions)
     .then((res) => res)
     .catch((e) => e.response);
 }
@@ -165,8 +172,9 @@ export {
   GetGenders,
   GetPositions,
   GetRanks,
-  GetMemberCount,
+  GetMemberCountForCurrentMonth,
   GetReceipts,
   AddPointsToMember,
   changePassword,
+  GetMemberCountForMonth,
 };
