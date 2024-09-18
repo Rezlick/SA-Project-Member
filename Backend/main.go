@@ -51,7 +51,7 @@ func main() {
        r.GET("/ranks", controller.GetRanks)
 
        // MemberCount Routes
-       r.GET("/memberCountThisMonth", controller.GetMemberCountThisMonth)
+       r.GET("/memberCountForCurrentMonth", controller.GetMemberCountForCurrentMonth)
 
        // Receipt Routes
        r.GET("/receipt", controller.GetReceipts)
@@ -60,6 +60,8 @@ func main() {
        r.PATCH("/member/:id/addPoints", controller.AddPointsToMember)
 
        r.PATCH("/employee/:id/changePassword", controller.ChangePassword)
+
+       r.GET("/memberCountForMonth", controller.GetMemberCountForMonth)
    }
 
    r.GET("/", func(c *gin.Context) {
