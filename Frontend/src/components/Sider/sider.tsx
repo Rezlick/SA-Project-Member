@@ -3,14 +3,12 @@ import { Layout, Menu, message, Button } from "antd";
 
 import {
   UserOutlined,
-  DashboardOutlined,
   LogoutOutlined,
   DollarOutlined,
   AppstoreOutlined,
   SolutionOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
-  TeamOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { GetEmployeeByID, GetPositions } from "../../services/https";
@@ -18,7 +16,6 @@ import { PositionInterface } from "../../interfaces/Position";
 import { EmployeeInterface } from "../../interfaces/Employee";
 
 function Sider() {
-  const page = localStorage.getItem("page");
   const { Sider } = Layout;
   const [messageApi, contextHolder] = message.useMessage();
   const [collapsed, setCollapsed] = useState(false);
@@ -161,19 +158,10 @@ function Sider() {
 
             <Menu
               style={{ backgroundColor: "#FF7D29" }}
-              defaultSelectedKeys={[page ? page : "dashboard"]}
+              defaultSelectedKeys={["member"]}
               mode="inline"
               inlineCollapsed={collapsed}
             >
-              <Menu.Item
-                key="dashboard"
-                onClick={() => setCurrentPage("dashboard")}
-              >
-                <Link to="/">
-                  <DashboardOutlined />
-                  <span>แดชบอร์ด</span>
-                </Link>
-              </Menu.Item>
 
               <Menu.Item key="member" onClick={() => setCurrentPage("member")}>
                 <Link to="/member">
@@ -203,15 +191,6 @@ function Sider() {
                 </Link>
               </Menu.Item>
 
-              <Menu.Item
-                key="employee"
-                onClick={() => setCurrentPage("employee")}
-              >
-                <Link to="/employee">
-                  <TeamOutlined />
-                  <span>พนักงาน</span>
-                </Link>
-              </Menu.Item>
             </Menu>
           </div>
 
