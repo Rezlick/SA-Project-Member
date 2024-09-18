@@ -20,15 +20,50 @@ const ChangePassword = Loadable(lazy(() => import("../components/Pages/ProfileEd
 
 const Payment = Loadable(lazy(() => import("../components/Pages/Payment/payment")))
 
-const AdminRoutes = (isLoggedIn : boolean): RouteObject => {
+const AdminRoutes = (isLoggedIn: boolean, role: string): RouteObject => {
+  const dashboardRoute = {
+    path: "/dashboard",
+    element: <Dashboard />,
+  };
+
+  const employeeRoutes = [
+    {
+      path: "/employee",
+      element: <Employee />,
+    },
+    {
+      path: "/employee/create",
+      element: <CreateEmployee />,
+    },
+    {
+      path: "/employee/edit/:id",
+      element: <EditEmployee />,
+    },
+  ];
+
+  const memberRoutes = [
+    {
+      path: "/member",
+      element: <Member />,
+    },
+    {
+      path: "/member/create",
+      element: <CreateMember />,
+    },
+    {
+      path: "/member/edit/:id",
+      element: <EditMember />,
+    },
+  ];
+
   return {
     path: "/",
     element: isLoggedIn ? <FullLayout /> : <MainPages />,
     children: [
-      {
-        path: "/",
-        element: <Dashboard />,
-      },
+      // Dashboard route
+      ...(role !== "Common" ? [dashboardRoute] : []),
+
+      // Profile and Payment routes, accessible to all
       {
         path: "/profileEdit",
         element: <ProfileEdit />,
@@ -41,49 +76,20 @@ const AdminRoutes = (isLoggedIn : boolean): RouteObject => {
         path: "/payment",
         element: <Payment />,
       },
+
+      // Member routes, accessible to all roles
       {
         path: "/member",
-        children: [
-          {
-            path: "/member",
-            element: <Member />,
-          },
-          {
-
-            path: "/member/create",
-
-            element: <CreateMember />
-          },
-          {
-
-            path: "/member/edit/:id",
-
-            element: <EditMember />
-          },
-        ]
+        children: memberRoutes,
       },
-      {
+
+      // Employee routes, accessible only to IT role
+      ...(role === "IT" ? [{
         path: "/employee",
-        children: [
-          {
-            path: "/employee",
-            element: <Employee />,
-          },
-          {
-
-            path: "/employee/create",
-
-            element: <CreateEmployee />
-          },
-          {
-
-            path: "/employee/edit/:id",
-
-            element: <EditEmployee />
-          },
-        ]
-      },
+        children: employeeRoutes,
+      }] : []),
     ],
   };
 };
+
 export default AdminRoutes;
