@@ -14,7 +14,7 @@ func DB() *gorm.DB {
 }
 
 func ConnectionDB() {
-   database, err := gorm.Open(sqlite.Open("Member.db?cache=shared"), &gorm.Config{})
+   database, err := gorm.Open(sqlite.Open("SA_Project_G16.db?cache=shared"), &gorm.Config{})
    if err != nil {
        panic("failed to connect database")
    }
@@ -32,6 +32,8 @@ func SetupDatabase() {
       &entity.Receipt{},
 	)
 
+   MemberGuest := entity.Member{FirstName: "Guest", LastName: "User"}
+
    GenderMale := entity.Gender{Name: "ชาย"}
    GenderFemale := entity.Gender{Name: "หญิง"}
    GenderOther := entity.Gender{Name: "อื่นๆ"}
@@ -47,9 +49,7 @@ func SetupDatabase() {
    RankSilver := entity.Rank{Name: "Silver", Discount: 0.05, PointToUpgrade: 300}
    RankGold := entity.Rank{Name: "Gold", Discount: 0.07, PointToUpgrade: 500}
 
-   Receipt1 := entity.Receipt{Totalprice: 1000,MemberID: 1,EmployeeID: 1}
-   Receipt2 := entity.Receipt{Totalprice: 2000,MemberID: 3,EmployeeID: 2}
-   Receipt3 := entity.Receipt{Totalprice: 2500,MemberID: 2,EmployeeID: 1}
+   db.FirstOrCreate(&MemberGuest, &entity.Member{FirstName: "Guest", LastName: "User"})
 
    db.FirstOrCreate(&RankBronze, &entity.Rank{Name: "Bronze", Discount: 0.03, PointToUpgrade: 100})
    db.FirstOrCreate(&RankSilver, &entity.Rank{Name: "Silver", Discount: 0.05, PointToUpgrade: 300})
@@ -65,10 +65,6 @@ func SetupDatabase() {
    db.FirstOrCreate(&PositionFoodServerManager, &entity.Position{Name: "FoodServer"})
    db.FirstOrCreate(&PositionCounterServiceManager, &entity.Position{Name: "CounterService"})
    db.FirstOrCreate(&PositionStockManager, &entity.Position{Name: "StockManager"})
-
-   db.FirstOrCreate(&Receipt1, &entity.Receipt{Totalprice: 1000,MemberID: 1,EmployeeID: 1})
-   db.FirstOrCreate(&Receipt2, &entity.Receipt{Totalprice: 2000,MemberID: 3,EmployeeID: 2})
-   db.FirstOrCreate(&Receipt3, &entity.Receipt{Totalprice: 2500,MemberID: 2,EmployeeID: 1})
 
    hashedPassword, _ := HashPassword("12345")
 
