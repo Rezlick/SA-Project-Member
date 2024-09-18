@@ -13,7 +13,7 @@ function LoginPages() {
     let res = await SignIn(values);
 
     if (res.status === 200) {
-      messageApi.success("Login successful");
+      messageApi.success("เข้าสู่ระบบสำเร็จ");
       localStorage.setItem("isLogin", "true");
       localStorage.setItem("page", "dashboard");
       localStorage.setItem("token_type", res.data.token_type);
@@ -22,8 +22,24 @@ function LoginPages() {
       localStorage.setItem("firstName", res.data.firstName);
       localStorage.setItem("lastName", res.data.lastName);
       localStorage.setItem("positionID", res.data.positionID);
+      const positionID = localStorage.getItem("positionID")
+      let role = "";
+      if (positionID === '1') {
+        role = "IT"
+      } else if (positionID === '2'){
+        role = "Manager"
+      } else {
+        role = "Common"
+      }
       setTimeout(() => {
-        navigate("/");
+        if (role === "IT") {
+          navigate("/dashboard");
+        } else if (role === "Manager") {
+          navigate("/dashboard");
+        } else {
+          navigate("/member");
+        }
+        
       }, 2000);
     } else {
       messageApi.error(res.data.error);
@@ -62,7 +78,7 @@ function LoginPages() {
 
               <Col xs={24} sm={24} md={24} lg={24} xl={24}>
                 <Form.Item>
-                  <Button type="primary" htmlType="submit" className="login-button">
+                  <Button htmlType="submit" className="login-button">
                     Login
                   </Button>
                 </Form.Item>
