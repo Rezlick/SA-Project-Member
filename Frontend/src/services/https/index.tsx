@@ -127,6 +127,13 @@ async function GetMemberCountForMonth(month: string, year: string) {
     .catch((e) => e.response);
 }
 
+async function GetMemberCountForDay(date: string) {
+  return await axios
+    .get(`${apiUrl}/memberCountForDay?day=${date}`, requestOptions)
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
 async function GetReceipts() {
   return await axios
   .get(`${apiUrl}/receipt`, requestOptions)
@@ -177,4 +184,5 @@ export {
   AddPointsToMember,
   changePassword,
   GetMemberCountForMonth,
+  GetMemberCountForDay,
 };
