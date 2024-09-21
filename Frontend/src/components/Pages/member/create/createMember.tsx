@@ -12,9 +12,8 @@ import {
   Select,
 } from "antd";
 import { MemberInterface } from "../../../../interfaces/Member";
-import { EmployeeInterface } from "../../../../interfaces/Employee";
 import { RankInterface } from "../../../../interfaces/Rank";
-import { CreateMember, GetEmployeeByID, GetRanks } from "../../../../services/https";
+import { CreateMember, GetRanks } from "../../../../services/https";
 import { useNavigate, Link } from "react-router-dom";
 
 function MemberCreate() {
@@ -23,6 +22,7 @@ function MemberCreate() {
   const [ranks, setRanks] = useState<RankInterface[]>([]);
   const employeeID = localStorage.getItem("id");
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getRanks = async () => {
     try {
@@ -45,6 +45,8 @@ function MemberCreate() {
   }, []);
 
   const onFinish = async (values: MemberInterface) => {
+    if (isSubmitting) return;
+      setIsSubmitting(true);
     values.EmployeeID = parseInt(employeeID || '', 10);
     const res = await CreateMember(values);
     if (res.status === 201) {
@@ -151,7 +153,12 @@ function MemberCreate() {
                     </Button>
                   </Link>
 
-                  <Button type="primary" htmlType="submit" style={{backgroundColor:"#FF7D29"}}>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    style={{backgroundColor:"#FF7D29"}} 
+                    loading={isSubmitting}
+                    disabled={isSubmitting}>
                     ยืนยัน
                   </Button>
                 </Space>
