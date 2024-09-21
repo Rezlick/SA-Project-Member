@@ -45,15 +45,15 @@ func SetupDatabase() {
    PositionCounterServiceManager := entity.Position{Name: "CounterService"}
    PositionStockManager := entity.Position{Name: "StockManager"}
 
-   RankBronze := entity.Rank{Name: "Bronze", Discount: 0.03 , PointToUpgrade: 100}
-   RankSilver := entity.Rank{Name: "Silver", Discount: 0.05, PointToUpgrade: 300}
-   RankGold := entity.Rank{Name: "Gold", Discount: 0.07, PointToUpgrade: 500}
+   RankBronze := entity.Rank{Name: "Bronze", Discount: 0.03 , PointToUpgrade: 20}
+   RankSilver := entity.Rank{Name: "Silver", Discount: 0.065, PointToUpgrade: 40}
+   RankGold := entity.Rank{Name: "Gold", Discount: 0.1, PointToUpgrade: 0}
 
    db.FirstOrCreate(&MemberGuest, &entity.Member{FirstName: "Guest", LastName: "User"})
 
-   db.FirstOrCreate(&RankBronze, &entity.Rank{Name: "Bronze", Discount: 0.03, PointToUpgrade: 100})
-   db.FirstOrCreate(&RankSilver, &entity.Rank{Name: "Silver", Discount: 0.05, PointToUpgrade: 300})
-   db.FirstOrCreate(&RankGold, &entity.Rank{Name: "Gold", Discount: 0.07, PointToUpgrade: 500})
+   db.FirstOrCreate(&RankBronze, &entity.Rank{Name: "Bronze", Discount: 0.03, PointToUpgrade: 20})
+   db.FirstOrCreate(&RankSilver, &entity.Rank{Name: "Silver", Discount: 0.065, PointToUpgrade: 40})
+   db.FirstOrCreate(&RankGold, &entity.Rank{Name: "Gold", Discount: 0.1, PointToUpgrade: 0})
 
    db.FirstOrCreate(&GenderMale, &entity.Gender{Name: "ชาย"})
    db.FirstOrCreate(&GenderFemale, &entity.Gender{Name: "หญิง"})
