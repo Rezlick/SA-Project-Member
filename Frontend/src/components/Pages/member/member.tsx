@@ -164,7 +164,7 @@ function Member() {
           rowKey="ID"
           columns={columns}
           dataSource={members} // Data from the API
-          pagination={{ pageSize: 10 }}
+          pagination={{ pageSize: 5 }}
           style={{ width: "100%", overflowX: "auto" }}
         />
       </div>
