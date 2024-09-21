@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { Space, Table, Button, Col, Row, Divider, message, Dropdown, Modal, Progress } from "antd";
+import { Space, Table, Button, Col, Row, Divider, message, Dropdown, Modal, Progress, InputNumber } from "antd";
 import { PlusOutlined, DeleteOutlined, EditOutlined, DashOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import { GetMembers, DeleteMemberByID } from "../../../services/https/index";
+import { GetMembers, DeleteMemberByID, AddPointsToMember } from "../../../services/https/index";
 import { MemberInterface } from "../../../interfaces/Member";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -40,21 +40,25 @@ function Member() {
       width: "25%",
       render: (record) => {
         const currentPoints = record.Point || 0;
-        const maxPoints = record.Rank?.PointToUpgrade || 0;
-        const percentage = maxPoints > 0 ? (currentPoints / maxPoints) * 100 : 0;
-
+        const currentRank = record.Rank?.Name || "N/A";
+        let maxPoints = record.Rank?.PointToUpgrade || 0;
+    
+        // Don't show maxPoints if the rank is "Gold"
+        const percentage = maxPoints > 0 ? (currentPoints / maxPoints) * 100 : 100;
+    
         return (
           <div style={{ width: 300 }}>
             <Progress
               strokeColor="#FF7D29"
               percent={percentage}
-              format={() => `${currentPoints}/${maxPoints}`}
+              format={() => (currentRank === "Gold" || currentRank === "N/A") ? `${currentPoints}` : `${currentPoints}/${maxPoints}`}
               size={[300, 20]}
             />
           </div>
         );
       },
     },
+    
     {
       title: "สมัครโดย",
       key: "Employee",
@@ -86,6 +90,7 @@ function Member() {
         </Dropdown>
       ),
     },
+
   ];
 
   const showDeleteConfirmModal = (id: string) => {
