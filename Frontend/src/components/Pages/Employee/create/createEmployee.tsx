@@ -33,6 +33,8 @@ function EmployeeCreate() {
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
@@ -53,6 +55,8 @@ function EmployeeCreate() {
   };
 
   const onFinish = async (values: EmployeeInterface) => {
+    if (isSubmitting) return;
+      setIsSubmitting(true);
     values.Profile = fileList[0].thumbUrl;
     const res = await CreateEmployee(values);
 
@@ -257,7 +261,12 @@ function EmployeeCreate() {
                     </Button>
                   </Link>
 
-                  <Button type="primary" htmlType="submit" style={{backgroundColor:"#FF7D29"}}>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    style={{backgroundColor:"#FF7D29"}} 
+                    loading={isSubmitting}
+                    disabled={isSubmitting}>
                     ยืนยัน
                   </Button>
                 </Space>
