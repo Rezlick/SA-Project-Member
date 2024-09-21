@@ -42,7 +42,7 @@ func CreateMember(c *gin.Context) {
 	    RankID:     member.RankID,		
 	    Rank:       rank,					
 	    EmployeeID: member.EmployeeID,				
-        Employee:    employee,
+        Employee:   employee,
     }
 
     if err := db.Create(&m).Error; err != nil {
@@ -194,6 +194,31 @@ func GetMemberCountForMonth(c *gin.Context) {
     // Select members created in the specified month and year
     query := "SELECT COUNT(id) FROM members WHERE strftime('%Y-%m', created_at) = ? AND first_name != 'Guest'"
     result := db.Raw(query, year+"-"+month).Scan(&count)
+
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"memberCount": count})
+}
+
+func GetMemberCountForDay(c *gin.Context) {
+    var count int64
+
+    // Get the date from query parameters (expects "YYYY-MM-DD" format)
+    day := c.Query("day")
+
+    if day == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Day is required in format YYYY-MM-DD"})
+        return
+    }
+
+    db := config.DB()
+
+    // Select members created on the specified day
+    query := "SELECT COUNT(id) FROM members WHERE strftime('%Y-%m-%d', created_at) = ? AND first_name != 'Guest'"
+    result := db.Raw(query, day).Scan(&count)
 
     if result.Error != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
