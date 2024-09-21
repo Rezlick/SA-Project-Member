@@ -37,6 +37,8 @@ function EmployeeEdit() {
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
@@ -121,6 +123,8 @@ function EmployeeEdit() {
   };
 
   const onFinish = async (values: EmployeeInterface) => {
+    if (isSubmitting) return;
+      setIsSubmitting(true);
     values.Profile = fileList[0].thumbUrl;
     const res = await UpdateEmployee(id, values);
     if (res.status === 200) {
@@ -270,10 +274,12 @@ function EmployeeEdit() {
                     </Button>
                   </Link>
 
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{backgroundColor:"#FF7D29"}}
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    style={{backgroundColor:"#FF7D29"}} 
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
                   >
                     บันทึก
                   </Button>
