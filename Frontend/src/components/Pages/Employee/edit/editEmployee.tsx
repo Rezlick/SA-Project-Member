@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   Space,
   Button,
@@ -15,23 +15,29 @@ import {
 import { PlusOutlined } from "@ant-design/icons";
 
 import { EmployeeInterface } from "../../../../interfaces/Employee";
-import { CreateEmployee, GetPositions, GetGenders } from "../../../../services/https";
-import { useNavigate, Link } from "react-router-dom";
 import { GenderInterface } from "../../../../interfaces/Gender";
 import { PositionInterface } from "../../../../interfaces/Position";
+import { GetEmployeeByID, UpdateEmployee, GetPositions, GetGenders } from "../../../../services/https";
+import { useNavigate, Link, useParams } from "react-router-dom";
 
 import type { GetProp, UploadFile, UploadProps } from "antd";
 import ImgCrop from "antd-img-crop";
 
 type FileType = Parameters<GetProp<UploadProps, "beforeUpload">>[0];
 
-function EmployeeCreate() {
+function EmployeeEdit() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [messageApi, contextHolder] = message.useMessage();
-  const [positions, setPositions] = useState<PositionInterface[]>([]);
+
+  const [form] = Form.useForm();
+
   const [genders, setGenders] = useState<GenderInterface[]>([]);
+  const [positions, setPositions] = useState<PositionInterface[]>([]); 
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
     setFileList(newFileList);
@@ -52,23 +58,35 @@ function EmployeeCreate() {
     imgWindow?.document.write(image.outerHTML);
   };
 
-  const onFinish = async (values: EmployeeInterface) => {
-    values.Profile = fileList[0].thumbUrl;
-    const res = await CreateEmployee(values);
+  const getUserById = async (id: string) => {
+    let res = await GetEmployeeByID(id);
+    if (res.status === 200) {
+      form.setFieldsValue({
+        FirstName: res.data.FirstName,
+        LastName: res.data.LastName,
+        Email: res.data.Email,
+        GenderID: res.data.GenderID,
+        PositionID: res.data.PositionID,
+      });
 
-    if (res.status === 201) {
+      if (res.data.Profile) {
+        setFileList([
+          {
+            uid: '-1',
+            name: 'profile-image.png',
+            status: 'done',
+            url: res.data.Profile, // Set the profile image URL
+          },
+        ]);
+      }
+    } else {
       messageApi.open({
-        type: "success",
-        content: res.data.message,
+        type: "error",
+        content: "ไม่พบข้อมูลผู้ใช้",
       });
       setTimeout(() => {
         navigate("/employee");
       }, 2000);
-    } else {
-      messageApi.open({
-        type: "error",
-        content: res.data.error,
-      });
     }
   };
 
@@ -104,18 +122,48 @@ function EmployeeCreate() {
     }
   };
 
+  const onFinish = async (values: EmployeeInterface) => {
+    if (isSubmitting) return;
+      setIsSubmitting(true);
+    values.Profile = fileList[0].thumbUrl;
+    const res = await UpdateEmployee(id, values);
+    if (res.status === 200) {
+      messageApi.open({
+        type: "success",
+        content: res.data.message,
+      });
+      setTimeout(() => {
+        navigate("/employee");
+      }, 2000);
+    } else {
+      messageApi.open({
+        type: "error",
+        content: res.data.error,
+      });
+    }
+  };
+
   useEffect(() => {
+    if (id) {
+      getUserById(id);
+    }
     getGenders();
     getPositions();
-  }, []);
+  }, [id]);
 
   return (
     <div>
       {contextHolder}
       <Card>
-        <h2>ลงทะเบียนพนักงาน</h2>
+        <h2>แก้ไขข้อมูล สมาชิก</h2>
         <Divider />
-        <Form name="basic" layout="vertical" onFinish={onFinish} autoComplete="off">
+        <Form
+          name="basic"
+          form={form}
+          layout="vertical"
+          onFinish={onFinish}
+          autoComplete="off"
+        >
           <Row gutter={[16, 0]}>
           <Col xs={24} sm={24} md={24} lg={24} xl={24}>
               <Form.Item
@@ -128,10 +176,6 @@ function EmployeeCreate() {
                     fileList={fileList}
                     onChange={onChange}
                     onPreview={onPreview}
-                    beforeUpload={(file) => {
-                      setFileList([...fileList, file]);
-                      return false;
-                    }}
                     maxCount={1}
                     multiple={false}
                     listType="picture-card"
@@ -152,7 +196,7 @@ function EmployeeCreate() {
                 rules={[
                   {
                     required: true,
-                    message: "กรุณากรอกชื่อ!",
+                    message: "กรุณากรอกชื่อ !",
                   },
                 ]}
               >
@@ -162,46 +206,16 @@ function EmployeeCreate() {
 
             <Col xs={24} sm={24} md={24} lg={24} xl={12}>
               <Form.Item
-                label="นามสกุล"
+                label="นามกสุล"
                 name="LastName"
                 rules={[
                   {
                     required: true,
-                    message: "กรุณากรอกนามสกุล!",
+                    message: "กรุณากรอกนามสกุล !",
                   },
                 ]}
               >
                 <Input />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-              <Form.Item
-                label="อีเมล"
-                name="Email"
-                rules={[
-                  {
-                    required: true,
-                    message: "กรุณากรอกอีเมล!",
-                  },
-                ]}
-              >
-                <Input/>
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-              <Form.Item
-                label="รหัสผ่าน"
-                name="Password"
-                rules={[
-                  {
-                    required: true,
-                    message: "กรุณาเลือกกรอกรหัสผ่าน!",
-                  },
-                ]}
-              >
-                <Input.Password />
               </Form.Item>
             </Col>
 
@@ -212,12 +226,12 @@ function EmployeeCreate() {
                 rules={[
                   {
                     required: true,
-                    message: "กรุณาเลือกเพศ!",
+                    message: "กรุณาเลือกเพศ !",
                   },
                 ]}
               >
                 <Select
-                  placeholder="กรุณาเลือกเพศ"
+                  placeholder="เลือกเพศ"
                   style={{ width: "100%" }}
                   options={genders.map((gender) => ({
                     value: gender.ID,
@@ -260,8 +274,14 @@ function EmployeeCreate() {
                     </Button>
                   </Link>
 
-                  <Button type="primary" htmlType="submit" style={{backgroundColor:"#FF7D29"}}>
-                    ยืนยัน
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    style={{backgroundColor:"#FF7D29"}} 
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
+                    บันทึก
                   </Button>
                 </Space>
               </Form.Item>
@@ -273,4 +293,4 @@ function EmployeeCreate() {
   );
 }
 
-export default EmployeeCreate;
+export default EmployeeEdit;

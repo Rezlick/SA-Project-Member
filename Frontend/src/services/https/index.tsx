@@ -1,3 +1,4 @@
+import { ChangePasswordInterface } from "../../interfaces/ChangePassword";
 import { EmployeeInterface } from "../../interfaces/Employee";
 import { LoginInterface } from "../../interfaces/Login";
 import { MemberInterface } from "../../interfaces/Member";
@@ -112,6 +113,55 @@ async function GetRanks() {
     .catch((e) => e.response);
 }
 
+async function GetMemberCountForCurrentMonth() {
+  return await axios
+    .get(`${apiUrl}/memberCountForCurrentMonth`, requestOptions)
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
+async function GetMemberCountForMonth(month: string, year: string) {
+  return await axios
+    .get(`${apiUrl}/memberCountForMonth?month=${month}&year=${year}`, requestOptions)
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
+async function GetMemberCountForDay(date: string) {
+  return await axios
+    .get(`${apiUrl}/memberCountForDay?day=${date}`, requestOptions)
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
+async function GetReceipts() {
+  return await axios
+  .get(`${apiUrl}/receipt`, requestOptions)
+  .then((res) => res)
+  .catch((e) => e.response);
+}
+
+async function AddPointsToMember(memberID: string, points: number) {
+  return await axios
+    .patch(
+      `${apiUrl}/member/${memberID}/addPoints`,
+      { points }, 
+      requestOptions
+    )
+    .then((res) => res)
+    .catch((e) => e.response);
+}
+
+async function changePassword(employeeID: string, payload: ChangePasswordInterface) {
+  return await axios
+    .patch(
+      `${apiUrl}/employee/${employeeID}/changePassword`, // Fix the endpoint URL typo
+      payload, // Send the payload directly, no need to wrap in another object
+      requestOptions
+    )
+    .then((res) => res)
+    .catch((e) => e.response);
+}
 
 
 export {
@@ -128,5 +178,11 @@ export {
   DeleteMemberByID,
   GetGenders,
   GetPositions,
-  GetRanks
+  GetRanks,
+  GetMemberCountForCurrentMonth,
+  GetReceipts,
+  AddPointsToMember,
+  changePassword,
+  GetMemberCountForMonth,
+  GetMemberCountForDay,
 };

@@ -24,6 +24,8 @@ function MemberEdit() {
   const [ranks, setRanks] = useState<RankInterface[]>([]);
   const [form] = Form.useForm();
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const getMemberById = async (id: string) => {
     let res = await GetMemberByID(id);
     if (res.status === 200) {
@@ -61,6 +63,8 @@ function MemberEdit() {
   };
 
   const onFinish = async (values: MemberInterface) => {
+    if (isSubmitting) return;
+      setIsSubmitting(true);
     const res = await UpdateMember(id, values);
     if (res.status === 200) {
       messageApi.open({
@@ -176,11 +180,12 @@ function MemberEdit() {
                     </Button>
                   </Link>
 
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    style={{backgroundColor:"#FF7D29"}}
-                  >
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    style={{backgroundColor:"#FF7D29"}} 
+                    loading={isSubmitting}
+                    disabled={isSubmitting}>
                     บันทึก
                   </Button>
                 </Space>

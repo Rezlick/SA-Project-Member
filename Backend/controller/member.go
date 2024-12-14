@@ -27,12 +27,12 @@ func CreateMember(c *gin.Context) {
 	}
 
     // ค้นหา employee ด้วย id
-	var employee entity.Employee
-	db.First(&employee, member.EmployeeID)
-	if employee.ID == 0 {
-		c.JSON(http.StatusNotFound, gin.H{"error": "employee not found"})
-		return
-	}
+    var employee entity.Employee
+    db.First(&employee, member.EmployeeID)
+    if employee.ID == 0 {
+        c.JSON(http.StatusNotFound, gin.H{"error": "employee not found"})
+        return
+    }
 
     // สร้าง Member
     m := entity.Member {
@@ -42,7 +42,7 @@ func CreateMember(c *gin.Context) {
 	    RankID:     member.RankID,		
 	    Rank:       rank,					
 	    EmployeeID: member.EmployeeID,				
-	    Employee:   employee,		
+        Employee:   employee,
     }
 
     if err := db.Create(&m).Error; err != nil {
@@ -117,4 +117,113 @@ func DeleteMember(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "ลบข้อมูลสำเร็จ"})
+}
+
+func GetMemberCountForCurrentMonth(c *gin.Context) {
+    var count int64
+
+    db := config.DB()
+    // Select members created in the current month
+    result := db.Raw(
+        `SELECT COUNT(id) 
+        FROM members 
+        WHERE strftime('%Y-%m', created_at) = strftime('%Y-%m', 'now')
+        AND first_name != 'Guest'`).Scan(&count)
+    
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"memberCount": count})
+}
+
+func AddPointsToMember(c *gin.Context) {
+    var pointsToAdd struct {
+        Points int 
+    }
+    memberID := c.Param("id")
+
+    // Bind JSON payload (points)
+    if err := c.ShouldBindJSON(&pointsToAdd); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload"})
+        return
+    }
+
+    // Check if points are valid (positive)
+    if pointsToAdd.Points <= 0 {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Points must be greater than 0"})
+        return
+    }
+
+    db := config.DB()
+    var member entity.Member
+
+    // Find the member by ID
+    if err := db.First(&member, memberID).Error; err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Member not found"})
+        return
+    }
+
+    // Add points to the member's existing points
+    member.Point += pointsToAdd.Points
+
+    // Save the updated member
+    if err := db.Save(&member).Error; err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update member"})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"message": "Points added successfully", "updatedPoints": member.Point})
+}
+
+func GetMemberCountForMonth(c *gin.Context) {
+    var count int64
+
+    // Get the month and year from query parameters
+    month := c.Query("month") // Expects "MM" format
+    year := c.Query("year")   // Expects "YYYY" format
+
+    if month == "" || year == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Month and year are required"})
+        return
+    }
+
+    db := config.DB()
+    
+    // Select members created in the specified month and year
+    query := "SELECT COUNT(id) FROM members WHERE strftime('%Y-%m', created_at) = ? AND first_name != 'Guest'"
+    result := db.Raw(query, year+"-"+month).Scan(&count)
+
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"memberCount": count})
+}
+
+func GetMemberCountForDay(c *gin.Context) {
+    var count int64
+
+    // Get the date from query parameters (expects "YYYY-MM-DD" format)
+    day := c.Query("day")
+
+    if day == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Day is required in format YYYY-MM-DD"})
+        return
+    }
+
+    db := config.DB()
+
+    // Select members created on the specified day
+    query := "SELECT COUNT(id) FROM members WHERE strftime('%Y-%m-%d', created_at) = ? AND first_name != 'Guest'"
+    result := db.Raw(query, day).Scan(&count)
+
+    if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"memberCount": count})
 }

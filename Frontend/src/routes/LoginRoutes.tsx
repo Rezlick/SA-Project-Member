@@ -1,15 +1,11 @@
 import { lazy } from "react";
-import React from "react";
 import { RouteObject } from "react-router-dom";
-import MinimalLayout from "../components/MinimalLayout";
+import MinimalLayout from "../components/MinimalLayout/minimalLayout";
 import Loadable from "../components/third-party/Loadable";
-
-
 
 const LoginPages = Loadable(lazy(() => import("../components/Pages/login/login")));
 
-
-const MainRoutes = (): RouteObject => {
+const LoginRoutes = (): RouteObject => {
   return {
     path: "/",
     element: <MinimalLayout />,
@@ -26,4 +22,4 @@ const MainRoutes = (): RouteObject => {
   };
 };
 
-export default MainRoutes;
+export default LoginRoutes;

@@ -12,33 +12,17 @@ import {
   Select,
 } from "antd";
 import { MemberInterface } from "../../../../interfaces/Member";
-import { EmployeeInterface } from "../../../../interfaces/Employee";
 import { RankInterface } from "../../../../interfaces/Rank";
-import { CreateMember, GetEmployeeByID, GetRanks } from "../../../../services/https";
+import { CreateMember, GetRanks } from "../../../../services/https";
 import { useNavigate, Link } from "react-router-dom";
 
 function MemberCreate() {
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
-  const [employees, setEmployees] = useState<EmployeeInterface[]>([]);
   const [ranks, setRanks] = useState<RankInterface[]>([]);
   const employeeID = localStorage.getItem("id");
 
-  const getEmployees = async () => {
-    try {
-      const res = await GetEmployeeByID(employeeID || ""); // Fetch data from the API
-
-      if (res.status === 200) {
-        setEmployees([res.data]); // Set the data from the API response, only the employee with myId
-      } else {
-        setEmployees([]);
-        messageApi.error(res.data.error || "ไม่สามารถดึงข้อมูลได้");
-      }
-    } catch (error) {
-      setEmployees([]);
-      messageApi.error("เกิดข้อผิดพลาดในการดึงข้อมูล");
-    }
-  };
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getRanks = async () => {
     try {
@@ -57,13 +41,14 @@ function MemberCreate() {
   };
 
   useEffect(() => {
-    getEmployees();
     getRanks();
   }, []);
 
   const onFinish = async (values: MemberInterface) => {
+    if (isSubmitting) return;
+      setIsSubmitting(true);
+    values.EmployeeID = parseInt(employeeID || '', 10);
     const res = await CreateMember(values);
-
     if (res.status === 201) {
       messageApi.open({
         type: "success",
@@ -155,27 +140,7 @@ function MemberCreate() {
               </Form.Item>
             </Col>
 
-            <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-              <Form.Item
-                label="สมัครโดย"
-                name="EmployeeID" 
-                rules={[
-                  {
-                    required: false,
-                    message: "กรุณาเลือกพนักงาน!",
-                  },
-                ]}
-              >
-                <Select
-                  placeholder="เลือกพนักงาน"
-                  style={{ width: "100%" }}
-                  options={employees.map((emp) => ({
-                    value: emp.ID,
-                    label: emp.FirstName,
-                  }))}
-                />
-              </Form.Item>
-            </Col>
+            
           </Row>
 
           <Row justify="center">
@@ -188,7 +153,13 @@ function MemberCreate() {
                     </Button>
                   </Link>
 
-                  <Button type="primary" htmlType="submit" style={{backgroundColor:"#FF7D29"}}>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit" 
+                    style={{backgroundColor:"#FF7D29"}} 
+                    loading={isSubmitting}
+                    disabled={isSubmitting}
+                  >
                     ยืนยัน
                   </Button>
                 </Space>

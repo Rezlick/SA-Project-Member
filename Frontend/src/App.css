@@ -2,50 +2,6 @@ body {
   margin: 0;
 }
 
-:where(.css-dev-only-do-not-override-1c0na6j).ant-layout {
-  display: flex;
-  flex: auto;
-  flex-direction: column;
-  min-height: 0;
-  background: #FEFFD2;
-}
-
-:where(.css-dev-only-do-not-override-1c0na6j).ant-layout .ant-layout-sider {
-  position: relative;
-  min-width: 0;
-  background: #FF7D29;
-  transition: all 0.2s, background 0s;
-}
-
-:where(.css-dev-only-do-not-override-1c0na6j).ant-layout .ant-layout-sider-trigger {
-  position: relative;
-  bottom: 0;
-  z-index: 1;
-  height: 48px;
-  color: #fff;
-  line-height: 48px;
-  text-align: center;
-  background: #FF7D29;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-:where(.css-dev-only-do-not-override-1c0na6j).ant-pagination .ant-pagination-item-active {
-  font-weight: 600;
-  background-color: #ffffff;
-  border-color: #FF7D29;
-}
-
-:where(.css-dev-only-do-not-override-1c0na6j).ant-pagination .ant-pagination-item-active a {
-  color: #FF7D29;
-}
-
-:where(.css-dev-only-do-not-override-1c0na6j).ant-btn-primary {
-  color: #fff;
-  background: #FF7D29;
-  box-shadow: 0 2px 0 rgba(5, 145, 255, 0.1);
-}
-
 .logo {
   object-fit: contain;
   height: 100px;

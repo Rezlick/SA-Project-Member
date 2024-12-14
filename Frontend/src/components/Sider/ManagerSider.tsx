@@ -3,6 +3,7 @@ import { Layout, Menu, message, Button } from "antd";
 
 import {
   UserOutlined,
+  DashboardOutlined,
   LogoutOutlined,
   DollarOutlined,
   AppstoreOutlined,
@@ -15,7 +16,8 @@ import { GetEmployeeByID, GetPositions } from "../../services/https";
 import { PositionInterface } from "../../interfaces/Position";
 import { EmployeeInterface } from "../../interfaces/Employee";
 
-function Sider() {
+function ManagerSider() {
+  const page = localStorage.getItem("page");
   const { Sider } = Layout;
   const [messageApi, contextHolder] = message.useMessage();
   const [collapsed, setCollapsed] = useState(false);
@@ -158,10 +160,19 @@ function Sider() {
 
             <Menu
               style={{ backgroundColor: "#FF7D29" }}
-              defaultSelectedKeys={["member"]}
+              defaultSelectedKeys={[page ? page : "dashboard"]}
               mode="inline"
               inlineCollapsed={collapsed}
             >
+              <Menu.Item
+                key="dashboard"
+                onClick={() => setCurrentPage("dashboard")}
+              >
+                <Link to="/dashboard">
+                  <DashboardOutlined />
+                  <span>แดชบอร์ด</span>
+                </Link>
+              </Menu.Item>
 
               <Menu.Item key="member" onClick={() => setCurrentPage("member")}>
                 <Link to="/member">
@@ -206,4 +217,4 @@ function Sider() {
   );
 }
 
-export default Sider;
+export default ManagerSider;
